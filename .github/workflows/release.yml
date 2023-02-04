@@ -1,0 +1,37 @@
+name: Release
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    permissions: write-all
+    runs-on: ubuntu-latest
+    name: Build and Push
+    steps:
+      - name: git-checkout
+        id: git-checkout
+        uses: actions/checkout@v2
+
+      - name: Copying release resources
+        id: copying-release-resources
+        run: |
+          mkdir release
+          cp -r assets css js *.html release
+
+      - name: Versioning static resources
+        id: versioning-static-resources
+        run: sed -i "s/UNDEFINED_VERSION/${{ github.sha }}/g" release/*.html
+    
+      - name: Push to deploy branch
+        id: push-to-deploy-branch
+        uses: s0/git-publish-subdir-action@v2.6.0
+        env:
+          REPO: self
+          BRANCH: deploy
+          FOLDER: release
+          GITHUB_TOKEN: ${{ github.token }}
+          MESSAGE: "Versioned index.html linked static resource with commit '({ github.sha })'"
