@@ -20,7 +20,7 @@ jobs:
         id: versioning-static-resources
         run: |
           mkdir release
-          mv ./* release
+          cp -r assets css js *.html release
           cd release
           sed -i "s/UNDEFINED_VERSION/${{ github.sha }}/g" index.html
           echo "hello world" > hello-world.txt
