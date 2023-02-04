@@ -19,6 +19,9 @@ jobs:
       - name: Versioning static resources
         id: versioning-static-resources
         run: |
+          mkdir release
+          mv ./* release
+          cd release
           sed -i "s/UNDEFINED_VERSION/${{ github.sha }}/g" index.html
           echo "hello world" > hello-world.txt
     
@@ -28,6 +31,6 @@ jobs:
         env:
           REPO: self
           BRANCH: deploy
-          FOLDER: ${{ github.workspace }}
+          FOLDER: release
           GITHUB_TOKEN: ${{ github.token }}
           MESSAGE: "Versioned index.html linked static resource with commit '({ github.sha })'"
