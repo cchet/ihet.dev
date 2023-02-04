@@ -16,14 +16,15 @@ jobs:
         id: git-checkout
         uses: actions/checkout@v2
 
-      - name: Versioning static resources
-        id: versioning-static-resources
+      - name: Copying release resources
+        id: copying-release-resources
         run: |
           mkdir release
           cp -r assets css js *.html release
-          cd release
-          sed -i "s/UNDEFINED_VERSION/${{ github.sha }}/g" index.html
-          echo "hello world" > hello-world.txt
+
+      - name: Versioning static resources
+        id: versioning-static-resources
+        run: sed -i "s/UNDEFINED_VERSION/${{ github.sha }}/g" release/*.html
     
       - name: Push to deploy branch
         id: push-to-deploy-branch
