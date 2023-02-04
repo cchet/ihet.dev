@@ -25,5 +25,6 @@ jobs:
         env:
           REPO: self
           BRANCH: deploy
+          FOLDER: .
           GITHUB_TOKEN: ${{ github.secret }}
           MESSAGE: "Versioned index.html linked static resource with commit '({ github.sha })'"
