@@ -18,7 +18,9 @@ jobs:
 
       - name: Versioning static resources
         id: versioning-static-resources
-        run: sed -i "s/UNDEFINED_VERSION/{{ github.sha }}/g" index.html
+        run: |
+          sed -i "s/UNDEFINED_VERSION/{{ github.sha }}/g" index.html
+          cat index.html
     
       - name: Push to deploy branch
         id: push-to-deploy-branch
