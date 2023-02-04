@@ -18,9 +18,7 @@ jobs:
 
       - name: Versioning static resources
         id: versioning-static-resources
-        run: |
-          sed -i "s/UNDEFINED_VERSION/{{ github.sha }}/g" index.html
-          cat index.html
+        run: sed -i "s/UNDEFINED_VERSION/${{ github.sha }}/g" index.html
     
       - name: Push to deploy branch
         id: push-to-deploy-branch
@@ -28,6 +26,6 @@ jobs:
         env:
           REPO: self
           BRANCH: deploy
-          FOLDER: .
+          FOLDER: ${{ github.workspace }}
           GITHUB_TOKEN: ${{ github.token }}
           MESSAGE: "Versioned index.html linked static resource with commit '({ github.sha })'"
