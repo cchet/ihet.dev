@@ -20,7 +20,7 @@ jobs:
         id: copying-release-resources
         run: |
           mkdir release
-          cp -r assets css js *.html release
+          cp -r assets css js *.html *.yml release
 
       - name: Versioning static resources
         id: versioning-static-resources
