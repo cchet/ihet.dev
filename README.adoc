@@ -1,4 +1,10 @@
-https://icon-icons.com/icon/redhat-original-logo
-- red hat icon
+= ihet.dev
+This repository holds the resources for my personal developer website.
 
-https://startbootstrap.com/theme/freelancer
+You can visit my website at link:https://www.ihet.dev[https://www.ihet.dev].
+
+== Resources
+
+This website was build on top of the link:https://startbootstrap.com/theme/freelancer[Startbootstrap Freelancer] template.
+
+This website uses icons available at link:https://icon-icons.com[https://icon-icons.com].
