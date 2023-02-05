@@ -21,11 +21,7 @@ jobs:
         run: |
           mkdir release
           cp -r assets css js *.html *.yml release
-
-      - name: Versioning static resources
-        id: versioning-static-resources
-        run: sed -i "s/UNDEFINED_VERSION/${{ github.sha }}/g" release/*.html
-    
+          
       - name: Push to deploy branch
         id: push-to-deploy-branch
         uses: s0/git-publish-subdir-action@v2.6.0
