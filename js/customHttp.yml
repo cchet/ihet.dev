@@ -1,0 +1,5 @@
+customHeaders:
+  - pattern: '*.html'
+    headers:
+    - key: 'Access-Control-Allow-Origin'
+      value: 'https://www.googletagmanager.com'
