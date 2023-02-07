@@ -17,6 +17,15 @@
     <!-- Core theme CSS (includes Bootstrap)-->
     <link href="css/styles.css" rel="stylesheet" />
     <link rel="stylesheet" href="css/cookieconsent-2.8.9.css" media="print" onload="this.media='all'">
+    <script src="https://www.googletagmanager.com/gtag/js?id=G-46RZRMC1YC"></script>
+    <script src="https://cdn.jsdelivr.net/gh/orestbida/cookieconsent@v2.8.9/dist/cookieconsent.js"></script>
+    <script type="module">
+        import consent from './js/cookieconsent-init.js'
+    
+        consent.init({
+            privacySettingsLink: 'privacySettings'
+        });
+    </script>
 </head>
 
 <body id="page-top">
@@ -366,23 +375,6 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Core theme JS-->
     <script src="js/scripts.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/orestbida/cookieconsent@v2.8.9/dist/cookieconsent.js"></script>
-    <script src="js/cookieconsent-init.js"></script>
-    <!-- Analytics stuff after consent !!!!! -->
-    <script src="https://www.googletagmanager.com/gtag/js?id=G-D92JB7JWQY"></script>
-    <script data-cookiecategory="analytics">
-        console.log('Enabling analytics')
-        window.dataLayer = window.dataLayer || [];
-
-        function gtag() {
-            dataLayer.push(arguments);
-        }
-        gtag('set', 'allow_ad_personalization_signals', false);
-        gtag('set', 'allow_google_signals', false);
-        gtag('js', new Date());
-
-        gtag('config', 'G-D92JB7JWQY');
-    </script>
 </body>
 
 </html
