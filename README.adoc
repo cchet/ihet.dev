@@ -10,3 +10,12 @@ This website was build on top of the link:https://startbootstrap.com/theme/freel
 This website uses icons available at link:https://icon-icons.com[https://icon-icons.com].
 
 Additionally this website uses images of technologies I work with which have been downloaded from their corrspoding website which linked with the images.
+
+== Privacy
+
+TODO: Document how integrated and managed
+
+=== Google Analytics
+
+TODO: Document how integrated and used
+
