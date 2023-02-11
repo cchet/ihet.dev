@@ -37,7 +37,7 @@ public class AwsStack extends Stack {
                                 .platform("WEB")
                                 .repository(config.repository)
                                 .autoBranchCreationConfig(AutoBranchCreationConfigProperty.builder()
-                                                .autoBranchCreationPatterns(List.of("deploy"))
+                                                .autoBranchCreationPatterns(List.of("deploy-frontend"))
                                                 .enableAutoBranchCreation(true)
                                                 .enablePerformanceMode(true)
                                                 .enableAutoBuild(true)
@@ -49,7 +49,7 @@ public class AwsStack extends Stack {
                 // Connect the branch which gets deployed automatically on a change
                 var branch = CfnBranch.Builder.create(this, buildResourceId("branch-deploy"))
                                 .appId(app.getAttrAppId())
-                                .branchName("deploy")
+                                .branchName("deploy-frontend")
                                 .enableAutoBuild(true)
                                 .enablePerformanceMode(true)
                                 .framework("javascript")
@@ -64,7 +64,7 @@ public class AwsStack extends Stack {
                                 .enableAutoSubDomain(true)
                                 .subDomainSettings(List.of(
                                                 Map.of(
-                                                                "branchName", "deploy",
+                                                                "branchName", "deploy-frontend",
                                                                 "prefix", "www")))
                                 .build();
                 domain.addDependency(branch);
