@@ -19,3 +19,27 @@ TODO: Document how integrated and managed
 
 TODO: Document how integrated and used
 
+== AWS CDK 
+
+This website is deployed on AWS Amplify, and the infrastructure is definied via the AWS CDK Java.
+
+See link:aws/src/main/java/dev/ihet/aws/amplify/AwsStack.java[AwsStack.java] for the infrastructure definition.
+
+The AWS Stack relies on an external `configuration.json` file which has to be located in the directory `aws`, and which provides the configuration for the infrastructure.
+
+.configuration.json
+[source,json]
+----
+{
+    "name": "AMPLIFY_APPLICATION_NAME",
+    "account": "AWS_ACCOUNT_ID",
+    "region": "AWS_REGION",
+    "repository": "URL_TO_THE_REPOSITORY",
+    "accessToken": "GH_ACCESS_TOKEN_FOR_AMPLIFY",
+    "domain": "DOMAIN"
+}
+----
+
+IMPORTANT: The `name` propery is also used to create the aws-stack and resource-ids. 
+           Don't change the name before you have deleted the aws-stack, otherwise the stack cannot be deleted anymore. 
+

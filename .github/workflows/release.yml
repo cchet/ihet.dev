@@ -20,7 +20,7 @@ jobs:
         id: copying-release-resources
         run: |
           mkdir release
-          cp -r assets css js *.html *.yml release
+          cp -r frontend/ release
           
       - name: Push to deploy branch
         id: push-to-deploy-branch
