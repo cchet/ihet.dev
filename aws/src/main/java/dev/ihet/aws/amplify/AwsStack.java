@@ -37,7 +37,7 @@ public class AwsStack extends Stack {
                                 .platform("WEB")
                                 .repository(config.repository)
                                 .autoBranchCreationConfig(AutoBranchCreationConfigProperty.builder()
-                                                .autoBranchCreationPatterns(List.of("deploy-frontend"))
+                                                .autoBranchCreationPatterns(List.of("deploy-*"))
                                                 .enableAutoBranchCreation(true)
                                                 .enablePerformanceMode(true)
                                                 .enableAutoBuild(true)
