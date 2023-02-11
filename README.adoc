@@ -43,3 +43,6 @@ The AWS Stack relies on an external `configuration.json` file which has to be lo
 IMPORTANT: The `name` propery is also used to create the aws-stack and resource-ids. 
            Don't change the name before you have deleted the aws-stack, otherwise the stack cannot be deleted anymore. 
 
+WARNING: If you re-create the AWS Amplify application, then cleanup your old DNS entries pointing to the old application.
+         Otherwise the sub-domain creation will fail because of that.
+
