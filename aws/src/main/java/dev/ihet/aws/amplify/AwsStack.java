@@ -27,10 +27,6 @@ public class AwsStack extends Stack {
                 this.config = Configuration.load();
                 // standard tags
                 var tags = List.of(
-                        CfnTag.builder().key("timestamp")
-                                        .value(DateTimeFormatter.ISO_DATE_TIME
-                                                        .format(LocalDateTime.now()))
-                                        .build(),
                         CfnTag.builder().key("owner").value(getAccount()).build(),
                         CfnTag.builder().key("name").value(config.name).build());
 
