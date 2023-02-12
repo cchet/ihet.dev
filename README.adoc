@@ -35,6 +35,7 @@ The AWS Stack relies on an external `configuration.json` file which has to be lo
     "account": "AWS_ACCOUNT_ID",
     "region": "AWS_REGION",
     "repository": "URL_TO_THE_REPOSITORY",
+    "branchName": "THE_BRANCH_FOR_WWW_AND_NOTIFICATIONS",
     "accessToken": "GH_ACCESS_TOKEN_FOR_AMPLIFY",
     "domain": "DOMAIN"
 }

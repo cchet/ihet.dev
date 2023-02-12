@@ -20,6 +20,8 @@ public class Configuration {
 
     public String repository;
 
+    public String branchName;
+
     public String accessToken;
 
     public String domain;
