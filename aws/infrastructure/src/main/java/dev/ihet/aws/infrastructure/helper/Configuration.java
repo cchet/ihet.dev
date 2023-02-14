@@ -1,4 +1,4 @@
-package dev.ihet.aws.amplify;
+package dev.ihet.aws.infrastructure.helper;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -25,6 +25,8 @@ public class Configuration {
     public String accessToken;
 
     public String domain;
+
+    public String apiKey;
 
     public static Configuration load() {
         if (CONFIG == null) {

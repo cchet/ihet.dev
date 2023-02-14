@@ -4,8 +4,8 @@
     xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>dev.ihet.aws</groupId>
-    <artifactId>ihet-dev-amplify</artifactId>
+    <groupId>dev.ihet.aws.infrastructure</groupId>
+    <artifactId>infrastructure</artifactId>
     <version>0.1</version>
 
     <properties>
@@ -32,7 +32,7 @@
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>3.0.0</version>
                 <configuration>
-                    <mainClass>dev.ihet.aws.amplify.AwsApp</mainClass>
+                    <mainClass>dev.ihet.aws.infrastructure.AwsApp</mainClass>
                 </configuration>
             </plugin>
         </plugins>
