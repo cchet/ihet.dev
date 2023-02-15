@@ -1,10 +1,10 @@
 package dev.ihet.aws.infrastructure.helper;
 
-import java.nio.file.Files;
-import java.nio.file.Paths;
-
 import jakarta.json.bind.JsonbBuilder;
 import jakarta.json.bind.JsonbConfig;
+
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public class Configuration {
 
@@ -15,7 +15,7 @@ public class Configuration {
     public String account;
 
     public String region;
-    
+
     public String name;
 
     public String repository;
@@ -28,6 +28,8 @@ public class Configuration {
 
     public String apiKey;
 
+    public String gId;
+
     public static Configuration load() {
         if (CONFIG == null) {
             try (var is = Files.newInputStream(Paths.get("configuration.json"))) {
@@ -37,5 +39,13 @@ public class Configuration {
             }
         }
         return CONFIG;
+    }
+
+    public String webOrigin() {
+        return "https://www." + domain;
+    }
+
+    public String apiSubdomain() {
+        return "api." + domain;
     }
 }

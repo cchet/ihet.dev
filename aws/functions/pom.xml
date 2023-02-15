@@ -35,22 +35,7 @@
         <!-- remove if not using jaxrs -->
         <dependency>
             <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-resteasy</artifactId>
-        </dependency>
-        <!-- remove if not using servlets -->
-        <dependency>
-            <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-undertow</artifactId>
-        </dependency>
-        <!-- remove if not using vertx web -->
-        <dependency>
-            <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-reactive-routes</artifactId>
-        </dependency>
-        <!-- remove if not using funqy -->
-        <dependency>
-            <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-funqy-http</artifactId>
+            <artifactId>quarkus-resteasy-jsonb</artifactId>
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
@@ -59,11 +44,6 @@
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-junit5</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.rest-assured</groupId>
-            <artifactId>rest-assured</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

@@ -1,11 +1,15 @@
 package dev.ihet.aws.infrastructure;
 
 import dev.ihet.aws.infrastructure.helper.Configuration;
-import dev.ihet.aws.infrastructure.stacks.AmplifyStack;
+import dev.ihet.aws.infrastructure.stacks.BackendStack;
+import dev.ihet.aws.infrastructure.stacks.FrontEndStack;
 import software.amazon.awscdk.App;
 import software.amazon.awscdk.Environment;
 import software.amazon.awscdk.StackProps;
 import software.amazon.awscdk.Tags;
+import software.amazon.awscdk.services.amplify.CfnApp;
+
+import java.util.List;
 
 import static dev.ihet.aws.infrastructure.helper.Util.resourceId;
 
@@ -19,12 +23,20 @@ public class AwsApp {
         Tags.of(app).add("owner", config.account);
         Tags.of(app).add("name", config.name);
 
-        new AmplifyStack(app, resourceId("AmplifyStack"), StackProps.builder()
+        new BackendStack(app, resourceId("Backend"), StackProps.builder()
                 .env(Environment.builder()
                         .account(config.account)
                         .region(config.region)
                         .build())
                 .build());
+
+         new FrontEndStack(app, resourceId("Frontend"), StackProps.builder()
+                .env(Environment.builder()
+                        .account(config.account)
+                        .region(config.region)
+                        .build())
+                .build());
+
         app.synth();
     }
 }

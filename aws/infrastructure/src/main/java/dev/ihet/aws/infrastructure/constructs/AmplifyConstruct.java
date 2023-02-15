@@ -34,7 +34,9 @@ public class AmplifyConstruct extends Construct {
                         .build())
                 .enableBranchAutoDeletion(true)
                 .environmentVariables(List.of(
-                        CfnApp.EnvironmentVariableProperty.builder().name("apiKey").value(config.apiKey).build()))
+                        CfnApp.EnvironmentVariableProperty.builder().name("API_KEY").value(config.apiKey).build(),
+                        CfnApp.EnvironmentVariableProperty.builder().name("GOOGLE_ANALYTICS_ID").value(config.gId).build()
+                ))
                 .build();
 
         // Connect the branch which gets deployed automatically on a change
