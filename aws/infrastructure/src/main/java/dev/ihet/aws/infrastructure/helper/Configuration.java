@@ -30,6 +30,10 @@ public class Configuration {
 
     public String gId;
 
+    public String sesArn;
+
+    public String email;
+
     public static Configuration load() {
         if (CONFIG == null) {
             try (var is = Files.newInputStream(Paths.get("configuration.json"))) {
@@ -43,9 +47,5 @@ public class Configuration {
 
     public String webOrigin() {
         return "https://www." + domain;
-    }
-
-    public String apiSubdomain() {
-        return "api." + domain;
     }
 }

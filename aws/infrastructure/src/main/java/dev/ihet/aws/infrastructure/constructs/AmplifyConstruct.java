@@ -1,6 +1,7 @@
 package dev.ihet.aws.infrastructure.constructs;
 
 import dev.ihet.aws.infrastructure.helper.Configuration;
+import dev.ihet.aws.infrastructure.stacks.BackendStack;
 import org.jetbrains.annotations.NotNull;
 import software.amazon.awscdk.services.amplify.CfnApp;
 import software.amazon.awscdk.services.amplify.CfnBranch;
@@ -18,7 +19,7 @@ public class AmplifyConstruct extends Construct {
 
     private final CfnApp app;
 
-    public AmplifyConstruct(@NotNull Construct scope, @NotNull String id) {
+    public AmplifyConstruct(@NotNull Construct scope, @NotNull String id, BackendStack backendStack) {
         super(scope, id);
 
         app = CfnApp.Builder.create(this, resourceId("App"))
@@ -34,6 +35,7 @@ public class AmplifyConstruct extends Construct {
                         .build())
                 .enableBranchAutoDeletion(true)
                 .environmentVariables(List.of(
+                        CfnApp.EnvironmentVariableProperty.builder().name("API_ROOT_URL").value(backendStack.getGatewayConstruct().getRestApi().getUrl()).build(),
                         CfnApp.EnvironmentVariableProperty.builder().name("API_KEY").value(config.apiKey).build(),
                         CfnApp.EnvironmentVariableProperty.builder().name("GOOGLE_ANALYTICS_ID").value(config.gId).build()
                 ))

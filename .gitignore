@@ -11,7 +11,7 @@ target/
 .settings/
 .vscode/
 *.iml
-
+frontend/config.json
 # CDK asset staging directory
 .cdk.staging/
 cdk.out/

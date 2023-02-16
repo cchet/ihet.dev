@@ -60,8 +60,32 @@ const initDOMConentLoaded = (options) => {
     });
 };
 
-const init = (options) => {
-    consent.init(options);
+const constinitWithConfig = async (options) => {
+    const config = await fetch('config.json', {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+            }
+        }).then(response => {
+            if (response.ok) {
+                return response.json();
+            }
+            throw Error(`Loading of config.josn failed with: ${response.status}`)
+        })
+        .catch(error => console.error(error));
+
+    if (config) {
+        console.log(`Loaded configuration: ${JSON.stringify(config)}`);
+        options.config = config;
+    }
+}
+
+const init = async (options) => {
+    await constinitWithConfig(options);
+    // Only if we have a google-analytics-id we need to ask for the consent, no cookie is used in this case
+    if (options.config && options.config.gId) {
+        consent.init(options);
+    }
     initDOMConentLoaded(options);
 };
 

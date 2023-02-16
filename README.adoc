@@ -23,9 +23,19 @@ TODO: Document how integrated and used
 
 This website is deployed on AWS Amplify, and the infrastructure is definied via the AWS CDK Java.
 
-See link:aws/src/main/java/dev/ihet/aws/amplify/AwsStack.java[AwsStack.java] for the infrastructure definition.
+See link:aws/[AWS CDK Resources] for the infrastructure definition.
 
-The AWS Stack relies on an external `configuration.json` file which has to be located in the directory `aws`, and which provides the configuration for the infrastructure.
+=== Preconditions
+
+Some manual steps are required before the infrastructure can be created which are documented here.
+
+* Public certificate managed by `Certificate Manager` +
+The pulic certificate used by the backend rest-api where the certificate ARN needs to be configured in the `configuration.json`. The following names need to be part of the certificate:
+** `<CONFIGURED_DOMAIN>`
+** `api.<CONFIGURED_DOMAIN>` 
+
+* SES verified email +
+Add the arn of the verified email to `configuration.json`
 
 .configuration.json
 [source,json]
@@ -38,13 +48,16 @@ The AWS Stack relies on an external `configuration.json` file which has to be lo
     "branchName": "THE_BRANCH_FOR_WWW_AND_NOTIFICATIONS",
     "accessToken": "GH_ACCESS_TOKEN_FOR_AMPLIFY",
     "domain": "DOMAIN",
-    "apiKey": "THE_API_KEY_FOR_THE_BACKEND"
+    "apiKey": "THE_API_KEY_FOR_THE_BACKEND",
+    /* optional, if note present, then no google analytics is enabled and no consent is required */
+    "gId": "THE_GOOGLE_ANALYTICS_ID",
+    "sesArn": "THE_ARN_OF_THE_VERIFIED_EMAIL"
 }
 ----
 
 IMPORTANT: The `name` propery is also used to create the aws-stack and resource-ids. 
            Don't change the name before you have deleted the aws-stack, otherwise the stack cannot be deleted anymore. 
 
-WARNING: If you re-create the AWS Amplify application, then cleanup your old DNS entries pointing to the old application.
+WARNING: If you re-create the AWS Amplify application, then cleanup your old DNS entries `CNAME=www` pointing to the old application.
          Otherwise the sub-domain creation will fail because of that. The domain has to been already verified by AWS as well.
 

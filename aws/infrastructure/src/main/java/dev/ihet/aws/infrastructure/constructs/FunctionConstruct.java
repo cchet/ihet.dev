@@ -1,11 +1,13 @@
 package dev.ihet.aws.infrastructure.constructs;
 
+import dev.ihet.aws.infrastructure.helper.Configuration;
 import dev.ihet.aws.infrastructure.helper.Util;
 import org.jetbrains.annotations.NotNull;
 import software.amazon.awscdk.BundlingOptions;
 import software.amazon.awscdk.BundlingOutput;
 import software.amazon.awscdk.DockerVolume;
 import software.amazon.awscdk.Duration;
+import software.amazon.awscdk.services.iam.PolicyStatement;
 import software.amazon.awscdk.services.lambda.Architecture;
 import software.amazon.awscdk.services.lambda.Code;
 import software.amazon.awscdk.services.lambda.Function;
@@ -14,8 +16,11 @@ import software.amazon.awscdk.services.s3.assets.AssetOptions;
 import software.constructs.Construct;
 
 import java.util.List;
+import java.util.Map;
 
 public class FunctionConstruct extends Construct {
+
+    private static final Configuration config = Configuration.load();
 
     private final Function function;
 
@@ -49,6 +54,21 @@ public class FunctionConstruct extends Construct {
                                 .build())
                         .build()))
                 .handler("io.quarkus.amazon.lambda.runtime.QuarkusStreamHandler::handleRequest")
+                 .initialPolicy(List.of(
+                         PolicyStatement.Builder.create()
+                                 .actions(List.of(
+                                         "ses:SendEmail",
+                                         "ses:SendRawEmail",
+                                         "ses:SendTemplatedEmail"
+                                 ))
+                                 .resources(List.of(
+                                         config.sesArn
+                                 ))
+                                 .build()
+                 ))
+                 .environment(Map.of(
+                         "AWS_EMAIL", config.email
+                 ))
                 .build();
     }
 

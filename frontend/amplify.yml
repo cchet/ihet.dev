@@ -2,7 +2,8 @@ version: 1
 frontend:
   phases:
     build:
-      commands: []
+      commands: 
+        - 'echo "{\"apiUrl\": \"${API_ROOT_URL}\",\"apiKey\": \"${API_KEY}\",\"gId\": \"${GOOGLE_ANALYTICS_ID}\"}" > ./config.json'
   artifacts:
     baseDirectory: /
     files:

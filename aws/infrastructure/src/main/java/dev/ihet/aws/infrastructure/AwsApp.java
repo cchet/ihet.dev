@@ -7,9 +7,6 @@ import software.amazon.awscdk.App;
 import software.amazon.awscdk.Environment;
 import software.amazon.awscdk.StackProps;
 import software.amazon.awscdk.Tags;
-import software.amazon.awscdk.services.amplify.CfnApp;
-
-import java.util.List;
 
 import static dev.ihet.aws.infrastructure.helper.Util.resourceId;
 
@@ -23,19 +20,20 @@ public class AwsApp {
         Tags.of(app).add("owner", config.account);
         Tags.of(app).add("name", config.name);
 
-        new BackendStack(app, resourceId("Backend"), StackProps.builder()
+        var backendStack = new BackendStack(app, resourceId("BackendStack"), StackProps.builder()
                 .env(Environment.builder()
                         .account(config.account)
                         .region(config.region)
                         .build())
                 .build());
 
-         new FrontEndStack(app, resourceId("Frontend"), StackProps.builder()
+         new FrontEndStack(app, resourceId("FrontendStack"), StackProps.builder()
                 .env(Environment.builder()
                         .account(config.account)
                         .region(config.region)
                         .build())
-                .build());
+                .build(),
+                 backendStack);
 
         app.synth();
     }

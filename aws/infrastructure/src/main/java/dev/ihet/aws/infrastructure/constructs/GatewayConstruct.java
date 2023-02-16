@@ -2,9 +2,7 @@ package dev.ihet.aws.infrastructure.constructs;
 
 import dev.ihet.aws.infrastructure.helper.Configuration;
 import org.jetbrains.annotations.NotNull;
-import software.amazon.awscdk.CfnOutput;
 import software.amazon.awscdk.services.apigateway.*;
-import software.amazon.awscdk.services.certificatemanager.Certificate;
 import software.amazon.awscdk.services.lambda.Function;
 import software.amazon.awscdk.services.lambda.HttpMethod;
 import software.constructs.Construct;
@@ -18,11 +16,14 @@ public class GatewayConstruct extends Construct {
 
     private static final Configuration config = Configuration.load();
 
-    public GatewayConstruct(@NotNull Construct scope, @NotNull String id, Function function, Certificate certificate) {
+    private final LambdaRestApi restApi;
+
+
+    public GatewayConstruct(@NotNull Construct scope, @NotNull String id, Function function) {
         super(scope, id);
 
         // REST -API
-        var restApi = LambdaRestApi.Builder.create(this, "RestApiContactMe")
+        restApi = LambdaRestApi.Builder.create(this, "RestApiContactMe")
                 .restApiName("restApiContactMe")
                 .description("The rest-api for sending emails")
                 .cloudWatchRole(true)
@@ -47,22 +48,13 @@ public class GatewayConstruct extends Construct {
                         .statusCode(200)
                         .build())
                 .build();
-        restApi.addApiKey(resourceId("RestApiContactMeApiKey"), ApiKeyOptions.builder()
+        var apiKey = restApi.addApiKey(resourceId("RestApiContactMeApiKey"), ApiKeyOptions.builder()
                 .description("The api key for the rest-api access")
                 .apiKeyName("restApiContactMeApiKey")
                 .value(config.apiKey)
                 .build());
         restApi.getRoot().addResource("contactMe")
                 .addMethod(HttpMethod.POST.name());
-        // If we have a certificate
-        if (certificate != null) {
-            restApi.addDomainName(config.apiSubdomain(), DomainNameOptions.builder()
-                    .certificate(certificate)
-                    .basePath("api")
-                    .endpointType(EndpointType.REGIONAL)
-                    .securityPolicy(SecurityPolicy.TLS_1_2)
-                    .build());
-        }
 
         // REST-API deployment
         var restApiDeployment = Deployment.Builder.create(this, resourceId("RestApiContactMeDeployment"))
@@ -73,7 +65,7 @@ public class GatewayConstruct extends Construct {
         restApiDeployment.addToLogicalId(UUID.randomUUID().toString());
 
         // REST-API usage plan
-        restApi.addUsagePlan(resourceId("RestApiContactMeUsagePlan"), UsagePlanProps.builder()
+        var usagePlan = restApi.addUsagePlan(resourceId("RestApiContactMeUsagePlan"), UsagePlanProps.builder()
                 .name("RestApiContactMeUsagePlan")
                 .apiStages(List.of(UsagePlanPerApiStage.builder()
                         .api(restApi)
@@ -84,9 +76,10 @@ public class GatewayConstruct extends Construct {
                         .burstLimit(10)
                         .build())
                 .build());
+        usagePlan.addApiKey(apiKey);
+    }
 
-        CfnOutput.Builder.create(this, resourceId("RestAPiOutput"))
-                .value(restApi.urlForPath("/contactMe"))
-                .build();
+    public LambdaRestApi getRestApi() {
+        return restApi;
     }
 }
