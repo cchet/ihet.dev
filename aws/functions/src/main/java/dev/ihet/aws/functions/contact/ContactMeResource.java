@@ -31,7 +31,7 @@ public class ContactMeResource {
     private void sendEmail(Contact contact) {
         var destination = Destination.builder().toAddresses(contact.email).build();
         var content = Content.builder().data(contact.message).build();
-        var sub = Content.builder().data("Contact request from " + contact.email).build();
+        var sub = Content.builder().data("(" + contact.stage + ") Contact request from " + contact.email).build();
         var body = Body.builder().html(content).build();
         var msg = Message.builder().subject(sub).body(body).build();
         var emailContent = EmailContent.builder().simple(msg).build();
@@ -39,7 +39,7 @@ public class ContactMeResource {
         var emailRequest = SendEmailRequest.builder()
                 .destination(destination)
                 .content(emailContent)
-                .fromEmailAddress(contact.email)
+                .fromEmailAddress(config.email)
                 .build();
 
         SesV2Client.builder()

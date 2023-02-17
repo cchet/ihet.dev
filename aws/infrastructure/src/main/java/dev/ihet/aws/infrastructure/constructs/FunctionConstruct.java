@@ -28,7 +28,7 @@ public class FunctionConstruct extends Construct {
         super(scope, id);
 
         // Functions
-         function = Function.Builder.create(this, "ContactMeFunction")
+        function = Function.Builder.create(this, "BackendFunction")
                 .functionName(Util.resourceId("ContactMeFunction"))
                 .description("The lambda for sending contact me emails")
                 .runtime(Runtime.JAVA_11)
@@ -54,21 +54,21 @@ public class FunctionConstruct extends Construct {
                                 .build())
                         .build()))
                 .handler("io.quarkus.amazon.lambda.runtime.QuarkusStreamHandler::handleRequest")
-                 .initialPolicy(List.of(
-                         PolicyStatement.Builder.create()
-                                 .actions(List.of(
-                                         "ses:SendEmail",
-                                         "ses:SendRawEmail",
-                                         "ses:SendTemplatedEmail"
-                                 ))
-                                 .resources(List.of(
-                                         config.sesArn
-                                 ))
-                                 .build()
-                 ))
-                 .environment(Map.of(
-                         "AWS_EMAIL", config.email
-                 ))
+                .initialPolicy(List.of(
+                        PolicyStatement.Builder.create()
+                                .actions(List.of(
+                                        "ses:SendEmail",
+                                        "ses:SendRawEmail",
+                                        "ses:SendTemplatedEmail"
+                                ))
+                                .resources(List.of(
+                                        config.sesArn
+                                ))
+                                .build()
+                ))
+                .environment(Map.of(
+                        "AWS_EMAIL", config.email
+                ))
                 .build();
     }
 

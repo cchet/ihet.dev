@@ -1,4 +1,5 @@
-import consent from './cookieconsent-init.js';
+import consent from './consentManager.js';
+import contactManager from './contactManager.js';
 
 const navbarShrink = (options) => {
     const {
@@ -53,15 +54,8 @@ const configureForm = (options) => {
     }));
 };
 
-const initDOMConentLoaded = (options) => {
-    document.addEventListener('DOMContentLoaded', () => {
-        configureForm(options);
-        configureNavbar(options);
-    });
-};
-
-const constinitWithConfig = async (options) => {
-    const config = await fetch('config.json', {
+const loadConfig = async (options) => {
+    return fetch('config.json', {
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
@@ -73,20 +67,22 @@ const constinitWithConfig = async (options) => {
             throw Error(`Loading of config.josn failed with: ${response.status}`)
         })
         .catch(error => console.error(error));
-
-    if (config) {
-        console.log(`Loaded configuration: ${JSON.stringify(config)}`);
-        options.config = config;
-    }
 }
 
 const init = async (options) => {
-    await constinitWithConfig(options);
-    // Only if we have a google-analytics-id we need to ask for the consent, no cookie is used in this case
-    if (options.config && options.config.gId) {
+    await loadConfig(options).then(config => {
+        if (config) {
+            console.log(`Loaded configuration: ${JSON.stringify(config)}`);
+            options.configLoaded = true;
+            options.config = config;
+        } else {
+            options.configLoaded = false;
+        }
+        contactManager.init(options);
         consent.init(options);
-    }
-    initDOMConentLoaded(options);
+        configureForm(options);
+        configureNavbar(options);
+    });
 };
 
 export default {

@@ -20,8 +20,11 @@ public class BackendStack extends Stack {
         gatewayConstruct = new GatewayConstruct(this, resourceId("GatewayConstruct"), function);
 
         // Output GatewayApi url
-        CfnOutput.Builder.create(this, resourceId("RestApiRootUrlOutput"))
-                .value(gatewayConstruct.getRestApi().getUrl())
+        CfnOutput.Builder.create(this, resourceId("ProdStageUrl"))
+                .value(gatewayConstruct.getProdStage().urlForPath())
+                .build();
+        CfnOutput.Builder.create(this, resourceId("TestStageUrl"))
+                .value(gatewayConstruct.getTestStage().urlForPath())
                 .build();
     }
 

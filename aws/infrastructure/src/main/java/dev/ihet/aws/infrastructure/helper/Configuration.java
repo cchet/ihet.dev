@@ -28,6 +28,7 @@ public class Configuration {
 
     public String apiKey;
 
+    public String testApiKey;
     public String gId;
 
     public String sesArn;

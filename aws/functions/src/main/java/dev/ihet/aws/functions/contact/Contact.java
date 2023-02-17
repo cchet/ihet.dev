@@ -17,4 +17,8 @@ public class Contact {
     @NotEmpty
     @Size(min = 10, max = 255)
     public String message;
+
+    @NotEmpty
+    @Size(min = 1, max = 10)
+    public String stage;
 }
