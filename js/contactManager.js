@@ -28,12 +28,18 @@ const sendEmail = async (options) => {
         })
         .then(response => response.json())
         .then(responseBody => {
-            document.querySelector(`.${contact.feedbackClass}-success`).classList.remove('d-none');
             console.log(`Sending email success response: ${JSON.stringify(responseBody)}`);
+            if (responseBody.error) {
+                document.querySelector(`.${contact.feedbackClass}-success`).classList.remove('d-none');
+            } else {
+                document.querySelector(`.${contact.feedbackClass}-error`).classList.remove('d-none');
+            }
+            form.reset();
+            form.classList.remove('was-validated');
         })
         .catch(error => {
+            console.error(`Sending email error ${error}`);
             document.querySelector(`.${contact.feedbackClass}-error`).classList.remove('d-none');
-            console.error(error);
         })
         .finally(() => {
             if (timeoutId) {
@@ -62,13 +68,9 @@ const registerSubmitEventOnContactForm = (options) => {
             form.querySelectorAll('input').forEach(element => {
                 element.setAttribute('disabled', 'true');
             });
-            sendEmail(options).then(response => {
-                form.querySelectorAll('input').forEach(element => {
-                    element.removeAttribute('disabled');
-                });
-                form.reset();
-                form.classList.remove('was-validated');
-            });
+            sendEmail(options).then(() => form.querySelectorAll('input').forEach(element => {
+                element.removeAttribute('disabled')
+            }));
         }
     });
 };
