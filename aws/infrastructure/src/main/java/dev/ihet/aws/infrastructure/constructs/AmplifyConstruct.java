@@ -55,7 +55,7 @@ public class AmplifyConstruct extends Construct {
                 .enablePerformanceMode(true)
                 .stage("BETA")
                 .environmentVariables(List.of(
-                        CfnBranch.EnvironmentVariableProperty.builder().name("API_ROOT_URL").value(backendStack.getGatewayConstruct().getProdStage().urlForPath()).build(),
+                        CfnBranch.EnvironmentVariableProperty.builder().name("API_ROOT_URL").value(backendStack.getGatewayConstruct().getTestStage().urlForPath()).build(),
                         CfnBranch.EnvironmentVariableProperty.builder().name("STAGE").value(backendStack.getGatewayConstruct().getTestStage().getStageName()).build()
                 ))
                 .build();
