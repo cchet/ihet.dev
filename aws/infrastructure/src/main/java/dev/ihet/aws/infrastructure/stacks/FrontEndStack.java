@@ -16,8 +16,8 @@ public class FrontEndStack extends Stack {
     public FrontEndStack(final Construct scope, final String id, final StackProps props, BackendStack backendStack) {
         super(scope, id, props);
 
-        amplify = new AmplifyConstruct(this, resourceId("AmplifyConstruct"), backendStack).getApp();
-        new AmplifyTopicConstruct(this, resourceId("TopicConstruct"), amplify);
+        amplify = new AmplifyConstruct(this, resourceId("Amplify"), backendStack).getApp();
+        new AmplifyTopicConstruct(this, resourceId("Topic"), amplify);
     }
 
     public CfnApp getAmplify() {

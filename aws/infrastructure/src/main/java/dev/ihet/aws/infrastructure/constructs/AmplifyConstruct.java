@@ -22,7 +22,7 @@ public class AmplifyConstruct extends Construct {
     public AmplifyConstruct(@NotNull Construct scope, @NotNull String id, BackendStack backendStack) {
         super(scope, id);
 
-        app = CfnApp.Builder.create(this, resourceId("App"))
+        app = CfnApp.Builder.create(this, resourceId("AmplifyApp"))
                 .name(config.name)
                 .accessToken(config.accessToken)
                 .platform("WEB")
@@ -35,7 +35,7 @@ public class AmplifyConstruct extends Construct {
                 .build();
 
         // Connect the branch which gets deployed automatically on a change
-        var prodBranch = CfnBranch.Builder.create(this, resourceId("ProdBranch"))
+        var prodBranch = CfnBranch.Builder.create(this, resourceId("AmplifyProdBranch"))
                 .appId(app.getAttrAppId())
                 .branchName(config.prodBranch())
                 .enableAutoBuild(true)
@@ -48,7 +48,7 @@ public class AmplifyConstruct extends Construct {
                 .build();
         prodBranch.addDependency(app);
 
-        var testBranch  = CfnBranch.Builder.create(this, resourceId("TestBranch"))
+        var testBranch  = CfnBranch.Builder.create(this, resourceId("AmplifyTestBranch"))
                 .appId(app.getAttrAppId())
                 .branchName(config.testBranch())
                 .enableAutoBuild(true)
@@ -62,7 +62,7 @@ public class AmplifyConstruct extends Construct {
         testBranch.addDependency(prodBranch);
 
         // Create the domain settings
-        CfnDomain.Builder.create(this, resourceId("Domain"))
+        CfnDomain.Builder.create(this, resourceId("AmplifyDomain"))
                 .appId(app.getAttrAppId())
                 .domainName(config.domain)
                 .enableAutoSubDomain(true)

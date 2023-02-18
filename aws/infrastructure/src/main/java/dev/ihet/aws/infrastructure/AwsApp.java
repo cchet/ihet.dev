@@ -17,6 +17,7 @@ public class AwsApp {
         var app = new App();
 
         var backendStack = new BackendStack(app, resourceId("BackendStack"), StackProps.builder()
+                .description("The backend for the website " + config.webOrigin())
                 .env(Environment.builder()
                         .account(config.account)
                         .region(config.region)
@@ -24,6 +25,7 @@ public class AwsApp {
                 .build());
 
          new FrontEndStack(app, resourceId("FrontendStack"), StackProps.builder()
+                 .description("The frontend for the website " + config.webOrigin())
                 .env(Environment.builder()
                         .account(config.account)
                         .region(config.region)

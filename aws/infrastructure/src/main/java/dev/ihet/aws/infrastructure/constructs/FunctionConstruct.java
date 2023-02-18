@@ -18,6 +18,8 @@ import software.constructs.Construct;
 import java.util.List;
 import java.util.Map;
 
+import static dev.ihet.aws.infrastructure.helper.Util.resourceId;
+
 public class FunctionConstruct extends Construct {
 
     private static final Configuration config = Configuration.load();
@@ -29,7 +31,7 @@ public class FunctionConstruct extends Construct {
 
         // Functions
         function = Function.Builder.create(this, "BackendFunction")
-                .functionName(Util.resourceId("ContactMeFunction"))
+                .functionName(resourceId("ContactMeFunction"))
                 .description("The lambda for sending contact me emails")
                 .runtime(Runtime.JAVA_11)
                 .architecture(Architecture.X86_64)

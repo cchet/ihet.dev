@@ -2,7 +2,7 @@
 *.zip
 startbootstrap*/
 node_modules/
-configuration.json
+configuration*.json
 .classpath.txt
 target/
 .classpath
