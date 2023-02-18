@@ -2,6 +2,7 @@ package dev.ihet.aws.functions.contact;
 
 import dev.ihet.aws.functions.Configuration;
 import dev.ihet.aws.functions.ResourceResponse;
+import org.jboss.logging.Logger;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.sesv2.SesV2Client;
 import software.amazon.awssdk.services.sesv2.model.*;
@@ -17,6 +18,7 @@ import javax.ws.rs.core.MediaType;
 @Path("/contactMe")
 public class ContactMeResource {
 
+    private static final Logger log = Logger.getLogger(ContactMeResource.class);
     @Inject
     Configuration config;
 
@@ -25,6 +27,7 @@ public class ContactMeResource {
     @Produces(MediaType.APPLICATION_JSON)
     public ResourceResponse contactMe(@Valid Contact contact) {
         sendEmail(contact);
+        log.info("Email successfully sent");
         return ResourceResponse.ok();
     }
 

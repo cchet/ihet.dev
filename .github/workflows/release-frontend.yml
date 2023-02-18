@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - main
+      - test
     paths:
       - "frontend/**"
 
@@ -29,7 +30,7 @@ jobs:
         uses: s0/git-publish-subdir-action@v2.6.0
         env:
           REPO: self
-          BRANCH: deploy-frontend
+          BRANCH: deploy-${{github.ref_name}}
           FOLDER: release
           GITHUB_TOKEN: ${{ github.token }}
           MESSAGE: "Versioned index.html linked static resource with commit '{sha}'"

@@ -25,29 +25,39 @@ const sendEmail = async (options) => {
                 'Accept': 'application/json',
             },
             body: JSON.stringify(contactRequestBody)
-        }).then(response => {
+        })
+        .then(response => response.json())
+        .then(responseBody => {
+            document.querySelector(`.${contact.feedbackClass}-success`).classList.remove('d-none');
+            console.log(`Sending email success response: ${JSON.stringify(responseBody)}`);
+        })
+        .catch(error => {
+            document.querySelector(`.${contact.feedbackClass}-error`).classList.remove('d-none');
+            console.error(error);
+        })
+        .finally(() => {
             if (timeoutId) {
                 clearTimeout(timeoutId);
             }
-            return response.json()
-        })
-        .then(responseBody => {
-            console.log(`Sending email received response: ${JSON.stringify(responseBody)}`);
-        }).catch(error => console.error(error));
+        });
+};
+
+const clearEmailFeedback = (options) => {
+    const {
+        contact
+    } = options;
+    document.querySelectorAll(`.${contact.feedbackClass}`).forEach(element => element.classList.add('d-none'));
 };
 
 const registerSubmitEventOnContactForm = (options) => {
     const {
-        contact
+        contact,
     } = options;
     document.getElementById(contact.formId).addEventListener('submit', async (event) => {
         const form = event.target;
-        const successContainer = document.getElementById(contact.successContainerId);
-        const errorContainer = document.getElementById(contact.errorContainerId);
-        successContainer.classList.add('d-noe');
-        errorContainer.classList.add('d-noe');
         event.preventDefault();
         event.stopPropagation();
+        clearEmailFeedback(options);
         if (form.checkValidity()) {
             form.querySelectorAll('input').forEach(element => {
                 element.setAttribute('disabled', 'true');
@@ -58,11 +68,6 @@ const registerSubmitEventOnContactForm = (options) => {
                 });
                 form.reset();
                 form.classList.remove('was-validated');
-                if (!response) {
-                    errorContainer.classList.remove('d-none');
-                } else {
-                    successContainer.classList.remove('d-none');
-                }
             });
         }
     });

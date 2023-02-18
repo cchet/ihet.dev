@@ -70,7 +70,7 @@ const loadConfig = async (options) => {
 }
 
 const init = async (options) => {
-    await loadConfig(options).then(config => {
+    loadConfig(options).then(config => {
         if (config) {
             console.log(`Loaded configuration: ${JSON.stringify(config)}`);
             options.configLoaded = true;

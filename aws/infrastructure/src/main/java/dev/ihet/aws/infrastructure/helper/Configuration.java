@@ -20,7 +20,7 @@ public class Configuration {
 
     public String repository;
 
-    public String branchName;
+    public String branchNamePrefix;
 
     public String accessToken;
 
@@ -48,5 +48,15 @@ public class Configuration {
 
     public String webOrigin() {
         return "https://www." + domain;
+    }
+    public String testOrigin() {
+        return "https://test." + domain;
+    }
+
+    public String prodBranch() {
+        return branchNamePrefix + "-main";
+    }
+    public String testBranch() {
+        return branchNamePrefix + "-test";
     }
 }

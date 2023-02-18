@@ -211,6 +211,7 @@
             <!-- Contact Section Form-->
             <div class="row justify-content-center text-white">
                 <div class="col-lg-8 col-xl-7">
+                    <div>The sending of the email could take up to 15 seconds if my backend has gone to sleep, so please be patient</div>
                     <form id="contactForm" class="needs-validation" novalidate>
                         <!-- Name input-->
                         <div class="form-floating mb-3">
@@ -232,11 +233,11 @@
                             <div class="invalid-feedback">You need to enter a message</div>
                         </div>
                         <!-- Submit success message-->
-                        <div class="d-none text-center text-secondary mb-3 fs-4" id="emailSendingSuccess">
+                        <div class="d-none text-center text-secondary mb-3 fs-4 feedback-element  feedback-element-succes" id="emailSendingSuccess">
                             The email was send
                         </div>
                         <!-- Submit error message-->
-                        <div class="d-none text-center text-danger mb-3 fs-4" id="emailSendingError">
+                        <div class="d-none text-center text-danger mb-3 fs-4 feedback-element feedback-element-error" id="emailSendingError">
                             Ups, the email could not be send
                         </div>
                         <!-- Submit Button-->
@@ -433,8 +434,7 @@
                 emailFieldId: 'email',
                 messageFieldId: 'message',
                 modalId: 'emailModal',
-                successContainerId: 'emailSendingSuccess',
-                errorContainerId: 'emailSendingError'
+                feedbackClass: 'feedback-element'
             }
         });
     </script>

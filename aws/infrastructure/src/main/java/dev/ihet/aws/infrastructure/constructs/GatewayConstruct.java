@@ -42,7 +42,7 @@ public class GatewayConstruct extends Construct {
                 .defaultCorsPreflightOptions(CorsOptions.builder()
                         .allowOrigins(List.of(
                                 config.webOrigin(),
-                                "http://127.0.0.1:5555"))
+                                config.testBranch()))
                         .allowMethods(List.of(HttpMethod.POST.name()))
                         .allowHeaders(List.of(
                                 "Content-Type",

@@ -16,10 +16,15 @@ public class AmplifyTopicConstruct extends Construct {
     public AmplifyTopicConstruct(@NotNull Construct scope, @NotNull String id, CfnApp app) {
         super(scope, id);
 
-        Topic.Builder.create(this, resourceId("AmplifyDeployTopic"))
-                .topicName(buildSnsTopicForAppIdAndBranch(app.getAttrAppId(), config.branchName))
+        createTopicForBranch(app, config.prodBranch(), "ProdTopic");
+        createTopicForBranch(app, config.testBranch(), "TestTopic");
+    }
+
+    private void createTopicForBranch(CfnApp app, String branchName, String idSuffix) {
+        Topic.Builder.create(this, resourceId(idSuffix))
+                .topicName(buildSnsTopicForAppIdAndBranch(app.getAttrAppId(), branchName))
                 .build()
-                .addSubscription(new EmailSubscription("herzog.thomas81@gmail.com"));
+                .addSubscription(new EmailSubscription(config.email));
     }
 
     private String buildSnsTopicForAppIdAndBranch(String appId, String branchName) {

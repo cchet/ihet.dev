@@ -27,12 +27,6 @@ public class AmplifyConstruct extends Construct {
                 .accessToken(config.accessToken)
                 .platform("WEB")
                 .repository(config.repository)
-                .autoBranchCreationConfig(CfnApp.AutoBranchCreationConfigProperty.builder()
-                        .autoBranchCreationPatterns(List.of("deploy-*"))
-                        .enableAutoBranchCreation(true)
-                        .enablePerformanceMode(true)
-                        .enableAutoBuild(true)
-                        .build())
                 .enableBranchAutoDeletion(true)
                 .environmentVariables(List.of(
                         CfnApp.EnvironmentVariableProperty.builder().name("API_KEY").value(config.apiKey).build(),
@@ -41,9 +35,9 @@ public class AmplifyConstruct extends Construct {
                 .build();
 
         // Connect the branch which gets deployed automatically on a change
-        var branch = CfnBranch.Builder.create(this, resourceId("ProdBranch"))
+        var prodBranch = CfnBranch.Builder.create(this, resourceId("ProdBranch"))
                 .appId(app.getAttrAppId())
-                .branchName(config.branchName)
+                .branchName(config.prodBranch())
                 .enableAutoBuild(true)
                 .enablePerformanceMode(true)
                 .stage("PRODUCTION")
@@ -52,19 +46,20 @@ public class AmplifyConstruct extends Construct {
                         CfnBranch.EnvironmentVariableProperty.builder().name("STAGE").value(backendStack.getGatewayConstruct().getProdStage().getStageName()).build()
                 ))
                 .build();
-        branch.addDependency(app);
+        prodBranch.addDependency(app);
 
-        CfnBranch.Builder.create(this, resourceId("TestBranch"))
+        var testBranch  = CfnBranch.Builder.create(this, resourceId("TestBranch"))
                 .appId(app.getAttrAppId())
-                .branchName(config.branchName + "-test")
+                .branchName(config.testBranch())
                 .enableAutoBuild(true)
+                .enablePerformanceMode(true)
                 .stage("BETA")
                 .environmentVariables(List.of(
                         CfnBranch.EnvironmentVariableProperty.builder().name("API_ROOT_URL").value(backendStack.getGatewayConstruct().getProdStage().urlForPath()).build(),
                         CfnBranch.EnvironmentVariableProperty.builder().name("STAGE").value(backendStack.getGatewayConstruct().getTestStage().getStageName()).build()
                 ))
-                .build()
-                .addDependency(app);
+                .build();
+        testBranch.addDependency(prodBranch);
 
         // Create the domain settings
         CfnDomain.Builder.create(this, resourceId("Domain"))
@@ -73,10 +68,13 @@ public class AmplifyConstruct extends Construct {
                 .enableAutoSubDomain(true)
                 .subDomainSettings(List.of(
                         Map.of(
-                                "branchName", branch.getBranchName(),
-                                "prefix", "www")))
+                                "branchName", prodBranch.getBranchName(),
+                                "prefix", "www"),
+                        Map.of(
+                                "branchName", testBranch.getBranchName(),
+                                "prefix", "test")))
                 .build()
-                .addDependency(branch);
+                .addDependency(testBranch);
     }
 
     public CfnApp getApp() {
