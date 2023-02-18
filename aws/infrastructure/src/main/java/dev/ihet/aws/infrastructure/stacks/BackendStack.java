@@ -16,8 +16,8 @@ public class BackendStack extends Stack {
     public BackendStack(final Construct scope, final String id, final StackProps props) {
         super(scope, id, props);
 
-        var function = new FunctionConstruct(this, resourceId("FunctionConstruct")).getFunction();
-        gatewayConstruct = new GatewayConstruct(this, resourceId("GatewayConstruct"), function);
+        var function = new FunctionConstruct(this, resourceId("BackendFunction")).getFunction();
+        gatewayConstruct = new GatewayConstruct(this, resourceId("BackendGateway"), function);
 
         // Output GatewayApi url
         CfnOutput.Builder.create(this, resourceId("ProdStageUrl"))

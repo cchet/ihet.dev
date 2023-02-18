@@ -16,8 +16,8 @@ public class AmplifyTopicConstruct extends Construct {
     public AmplifyTopicConstruct(@NotNull Construct scope, @NotNull String id, CfnApp app) {
         super(scope, id);
 
-        createTopicForBranch(app, config.prodBranch(), "ProdTopic");
-        createTopicForBranch(app, config.testBranch(), "TestTopic");
+        createTopicForBranch(app, config.prodBranch(), "AmplifyProdTopic");
+        createTopicForBranch(app, config.testBranch(), "AmplifyTestTopic");
     }
 
     private void createTopicForBranch(CfnApp app, String branchName, String idSuffix) {

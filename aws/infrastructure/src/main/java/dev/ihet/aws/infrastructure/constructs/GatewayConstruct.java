@@ -27,7 +27,7 @@ public class GatewayConstruct extends Construct {
         super(scope, id);
 
         // REST -API
-        var restApi = LambdaRestApi.Builder.create(this, resourceId("BackendRestApi"))
+        var restApi = LambdaRestApi.Builder.create(this, resourceId("RestApi"))
                 .restApiName("backend")
                 .description("The rest-api for sending emails")
                 .cloudWatchRole(true)
@@ -65,21 +65,21 @@ public class GatewayConstruct extends Construct {
                 .forEach(m -> ((CfnMethod)m.getNode().getDefaultChild()).setApiKeyRequired(false));
 
         // REST-API deployment
-        var deployment = Deployment.Builder.create(this, resourceId("BackendDeployment"))
+        var deployment = Deployment.Builder.create(this, resourceId("RestApiDeployment"))
                 .retainDeployments(false)
                 .api(restApi)
                 .build();
         deployment.addToLogicalId(UUID.randomUUID().toString());
 
         prodStage = restApi.getDeploymentStage();
-        testStage = Stage.Builder.create(this, resourceId("TestBackend"))
+        testStage = Stage.Builder.create(this, resourceId("RestApiTestStage"))
                 .stageName("test")
                 .deployment(deployment)
                 .loggingLevel(MethodLoggingLevel.INFO)
                 .build();
 
-        createUsagePlan(restApi, prodStage, "Prod", config.apiKey);
-        createUsagePlan(restApi, testStage, "Test", config.testApiKey);
+        createUsagePlan(restApi, prodStage, "RestApiProd", config.apiKey);
+        createUsagePlan(restApi, testStage, "RestApiTest", config.testApiKey);
 
         function.grantInvoke(ServicePrincipal.Builder.create("apigateway.amazonaws.com")
                 .region(config.region)
@@ -92,7 +92,7 @@ public class GatewayConstruct extends Construct {
                 .apiKeyName(stage.getStageName())
                 .value(apiKeyValue)
                 .build());
-        var testUsagePlan = restApi.addUsagePlan(resourceId(idSuffix + "UsagePlan"), UsagePlanProps.builder()
+        var testUsagePlan = restApi.addUsagePlan(resourceId(idSuffix + "Plan"), UsagePlanProps.builder()
                 .name(stage.getStageName())
                 .apiStages(List.of(
                         UsagePlanPerApiStage.builder()
