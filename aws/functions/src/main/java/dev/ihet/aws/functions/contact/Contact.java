@@ -19,6 +19,6 @@ public class Contact {
     public String message;
 
     @NotEmpty
-    @Size(min = 1, max = 10)
+    @Size(min = 1, max = 15)
     public String stage;
 }

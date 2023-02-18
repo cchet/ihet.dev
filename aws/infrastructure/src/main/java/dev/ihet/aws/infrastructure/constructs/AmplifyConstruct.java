@@ -43,7 +43,7 @@ public class AmplifyConstruct extends Construct {
                 .environmentVariables(List.of(
                         CfnBranch.EnvironmentVariableProperty.builder().name("API_KEY").value(config.apiKey).build(),
                         CfnBranch.EnvironmentVariableProperty.builder().name("API_ROOT_URL").value(backendStack.getGatewayConstruct().getProdStage().urlForPath()).build(),
-                        CfnBranch.EnvironmentVariableProperty.builder().name("STAGE").value(backendStack.getGatewayConstruct().getProdStage().getStageName()).build()
+                        CfnBranch.EnvironmentVariableProperty.builder().name("STAGE").value("production").build()
                 ))
                 .build();
         prodBranch.addDependency(app);
@@ -57,7 +57,7 @@ public class AmplifyConstruct extends Construct {
                 .environmentVariables(List.of(
                         CfnBranch.EnvironmentVariableProperty.builder().name("API_KEY").value(config.testApiKey).build(),
                         CfnBranch.EnvironmentVariableProperty.builder().name("API_ROOT_URL").value(backendStack.getGatewayConstruct().getTestStage().urlForPath()).build(),
-                        CfnBranch.EnvironmentVariableProperty.builder().name("STAGE").value(backendStack.getGatewayConstruct().getTestStage().getStageName()).build()
+                        CfnBranch.EnvironmentVariableProperty.builder().name("STAGE").value("testing").build()
                 ))
                 .build();
         testBranch.addDependency(prodBranch);

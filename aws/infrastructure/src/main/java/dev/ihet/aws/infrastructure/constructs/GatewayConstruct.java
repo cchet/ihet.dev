@@ -26,9 +26,24 @@ public class GatewayConstruct extends Construct {
     public GatewayConstruct(@NotNull Construct scope, @NotNull String id, Function function) {
         super(scope, id);
 
-        // REST -API
-        var restApi = LambdaRestApi.Builder.create(this, resourceId("RestApi"))
-                .restApiName("backend")
+        var prodRestApi = createLambdaRestApi(function, config.webOrigin(), "Prod");
+        var testRestApi = createLambdaRestApi(function, config.testOrigin(), "Test");
+
+        prodStage = prodRestApi.getDeploymentStage();
+        testStage = testRestApi.getDeploymentStage();
+
+        createUsagePlan(prodRestApi, prodStage, "Prod", config.apiKey);
+        createUsagePlan(testRestApi, testStage, "Test", config.testApiKey);
+
+        function.grantInvoke(ServicePrincipal.Builder.create("apigateway.amazonaws.com")
+                .region(config.region)
+                .build()
+        );
+    }
+
+    private LambdaRestApi createLambdaRestApi(Function function, String origin, String idSuffix) {
+        var restApi = LambdaRestApi.Builder.create(this, resourceId(idSuffix + "RestApi"))
+                .restApiName(idSuffix + "RestApi")
                 .description("The rest-api for sending emails")
                 .cloudWatchRole(true)
                 .deploy(true)
@@ -40,9 +55,7 @@ public class GatewayConstruct extends Construct {
                                 .types(List.of(EndpointType.REGIONAL))
                                 .build())
                 .defaultCorsPreflightOptions(CorsOptions.builder()
-                        .allowOrigins(List.of(
-                                config.webOrigin(),
-                                config.testBranch()))
+                        .allowOrigins(List.of(origin))
                         .allowMethods(List.of(HttpMethod.POST.name()))
                         .allowHeaders(List.of(
                                 "Content-Type",
@@ -50,6 +63,7 @@ public class GatewayConstruct extends Construct {
                                 "X-API-KEY"
                         ))
                         .statusCode(200)
+                        .build()).deployOptions(StageOptions.builder()
                         .build())
                 .build();
         restApi.getRoot().addResource("contactMe", ResourceOptions.builder()
@@ -65,35 +79,22 @@ public class GatewayConstruct extends Construct {
                 .forEach(m -> ((CfnMethod)m.getNode().getDefaultChild()).setApiKeyRequired(false));
 
         // REST-API deployment
-        var deployment = Deployment.Builder.create(this, resourceId("RestApiDeployment"))
+        var deployment = Deployment.Builder.create(this, resourceId(idSuffix + "Deployment"))
                 .retainDeployments(false)
                 .api(restApi)
                 .build();
         deployment.addToLogicalId(UUID.randomUUID().toString());
 
-        prodStage = restApi.getDeploymentStage();
-        testStage = Stage.Builder.create(this, resourceId("RestApiTestStage"))
-                .stageName("test")
-                .deployment(deployment)
-                .loggingLevel(MethodLoggingLevel.INFO)
-                .build();
-
-        createUsagePlan(restApi, prodStage, "RestApiProd", config.apiKey);
-        createUsagePlan(restApi, testStage, "RestApiTest", config.testApiKey);
-
-        function.grantInvoke(ServicePrincipal.Builder.create("apigateway.amazonaws.com")
-                .region(config.region)
-                .build()
-        );
+        return restApi;
     }
 
     private void createUsagePlan(RestApi restApi, Stage stage, String idSuffix, String apiKeyValue) {
         var apiKey = restApi.addApiKey(resourceId(idSuffix + "ApiKey"), ApiKeyOptions.builder()
-                .apiKeyName(stage.getStageName())
+                .apiKeyName(idSuffix + "ApiKey")
                 .value(apiKeyValue)
                 .build());
-        var testUsagePlan = restApi.addUsagePlan(resourceId(idSuffix + "Plan"), UsagePlanProps.builder()
-                .name(stage.getStageName())
+        var stageUsagePlan = restApi.addUsagePlan(resourceId(idSuffix + "UsagePlan"), UsagePlanProps.builder()
+                .name(idSuffix + "Stage")
                 .apiStages(List.of(
                         UsagePlanPerApiStage.builder()
                                 .api(restApi)
@@ -101,11 +102,11 @@ public class GatewayConstruct extends Construct {
                                 .build()
                 ))
                 .throttle(ThrottleSettings.builder()
-                        .rateLimit(2)
-                        .burstLimit(10)
+                        .rateLimit(1)
+                        .burstLimit(1)
                         .build())
                 .build());
-        testUsagePlan.addApiKey(apiKey);
+        stageUsagePlan.addApiKey(apiKey);
     }
 
     public Stage getProdStage() {
