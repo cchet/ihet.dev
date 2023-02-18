@@ -23,27 +23,41 @@ TODO: Document how integrated and used
 
 This website is deployed on AWS Amplify, and the infrastructure is definied via the AWS CDK Java.
 
-See link:aws/src/main/java/dev/ihet/aws/amplify/AwsStack.java[AwsStack.java] for the infrastructure definition.
+See link:aws/[AWS CDK Resources] for the infrastructure definition.
 
-The AWS Stack relies on an external `configuration.json` file which has to be located in the directory `aws`, and which provides the configuration for the infrastructure.
+=== Preconditions
+
+Some manual steps are required before the infrastructure can be created which are documented here.
+
+* SES verified email +
+Add the arn of the verified email to `configuration.json`
+
+=== Configuration of the Stacks
 
 .configuration.json
 [source,json]
 ----
 {
-    "name": "AMPLIFY_APPLICATION_NAME",
-    "account": "AWS_ACCOUNT_ID",
-    "region": "AWS_REGION",
-    "repository": "URL_TO_THE_REPOSITORY",
-    "branchName": "THE_BRANCH_FOR_WWW_AND_NOTIFICATIONS",
-    "accessToken": "GH_ACCESS_TOKEN_FOR_AMPLIFY",
-    "domain": "DOMAIN"
+    "account": "THE_ACCOUNT_CREATING_THE_STACKS",
+    "region": "THE_REGION_TO_DEPLOY_TO",
+    "name": "THE_NAME_PREFIX_FOR_THE_RESORUCES",
+    "repository": "THE_REPSOITORY_HOSTING_THE_FRONTED",
+    "branchNamePrefix": "THE_BRANCH_NAME_PREFIX_FOR__PROD_AND_TEST_BRANCHES",
+    "accessToken": "THE_GITHUB_ACCESS_TOKEN",
+    "domain": "THE_DOMAIN_UNDER_WHICH_TEH_FRONEND_IS_HOSTED",
+    "apiKey": "THE_PROD_API_KEY",
+    "testApiKey": "THE_TEST_API_KEY",
+    "gId": "G_ID_FOR_ANALYTICS",
+    "sesArn": "THE_VERIFIED_IDENTITY_FOR_CONTEXT_EMAILS",
+    "email": "THE_SES_VERIFIED_EMAIL"
 }
 ----
 
 IMPORTANT: The `name` propery is also used to create the aws-stack and resource-ids. 
            Don't change the name before you have deleted the aws-stack, otherwise the stack cannot be deleted anymore. 
 
-WARNING: If you re-create the AWS Amplify application, then cleanup your old DNS entries pointing to the old application.
+WARNING: If you re-create the AWS Amplify application, then cleanup your old DNS entries `CNAME=www` pointing to the old application.
          Otherwise the sub-domain creation will fail because of that. The domain has to been already verified by AWS as well.
 
+The `branchPrefix` is suffixed with `-main` for the porduction deployments and `-test` for the test deployments. +
+THe domain is suffixed with `www` for the production branch and with `test` for the test branch.

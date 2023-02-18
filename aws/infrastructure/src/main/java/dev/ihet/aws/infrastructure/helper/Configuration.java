@@ -1,10 +1,10 @@
-package dev.ihet.aws.amplify;
-
-import java.nio.file.Files;
-import java.nio.file.Paths;
+package dev.ihet.aws.infrastructure.helper;
 
 import jakarta.json.bind.JsonbBuilder;
 import jakarta.json.bind.JsonbConfig;
+
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public class Configuration {
 
@@ -15,16 +15,25 @@ public class Configuration {
     public String account;
 
     public String region;
-    
+
     public String name;
 
     public String repository;
 
-    public String branchName;
+    public String branchNamePrefix;
 
     public String accessToken;
 
     public String domain;
+
+    public String apiKey;
+
+    public String testApiKey;
+    public String gId;
+
+    public String sesArn;
+
+    public String email;
 
     public static Configuration load() {
         if (CONFIG == null) {
@@ -35,5 +44,19 @@ public class Configuration {
             }
         }
         return CONFIG;
+    }
+
+    public String webOrigin() {
+        return "https://www." + domain;
+    }
+    public String testOrigin() {
+        return "https://test." + domain;
+    }
+
+    public String prodBranch() {
+        return branchNamePrefix + "-main";
+    }
+    public String testBranch() {
+        return branchNamePrefix + "-test";
     }
 }
