@@ -1,6 +1,17 @@
 .DS_Store
 *.zip
 startbootstrap*/
-.vscode/
 node_modules/
-configuration.json
+configuration*.json
+.classpath.txt
+target/
+.classpath
+.project
+.idea/
+.settings/
+.vscode/
+*.iml
+frontend/config.json
+# CDK asset staging directory
+.cdk.staging/
+cdk.out/
