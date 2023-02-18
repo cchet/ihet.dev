@@ -17,12 +17,8 @@ public class FrontEndStack extends Stack {
     public FrontEndStack(final Construct scope, final String id, final StackProps props) {
         super(scope, id, props);
 
-        CfnParameter prodUrl = CfnParameter.Builder.create(this, "prodUrl")
-                .type("String")
-                .build();
-        CfnParameter testUrl = CfnParameter.Builder.create(this, "testUrl")
-                .type("String")
-                .build();
+        CfnParameter prodUrl = CfnParameter.Builder.create(this, "prodUrl").build();
+        CfnParameter testUrl = CfnParameter.Builder.create(this, "testUrl").build();
 
         amplify = new AmplifyConstruct(this, resourceId("Amplify"), prodUrl, testUrl).getApp();
         new AmplifyTopicConstruct(this, resourceId("Topic"), amplify);

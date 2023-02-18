@@ -2,6 +2,7 @@ package dev.ihet.aws.infrastructure.constructs;
 
 import dev.ihet.aws.infrastructure.helper.Configuration;
 import org.jetbrains.annotations.NotNull;
+import software.amazon.awscdk.CfnParameter;
 import software.amazon.awscdk.services.apigateway.*;
 import software.amazon.awscdk.services.iam.ServicePrincipal;
 import software.amazon.awscdk.services.lambda.Function;
@@ -18,8 +19,11 @@ public class GatewayConstruct extends Construct {
 
     private static final Configuration config = Configuration.load();
 
-    public GatewayConstruct(@NotNull Construct scope, @NotNull String id, Function function) {
+    private final CfnParameter recreateDeployment;
+
+    public GatewayConstruct(@NotNull Construct scope, @NotNull String id, Function function, CfnParameter recreateDeployment) {
         super(scope, id);
+        this.recreateDeployment = recreateDeployment;
 
         var prodRestApi = createLambdaRestApi(function, config.webOrigin(), "Prod");
         var testRestApi = createLambdaRestApi(function, config.testOrigin(), "Test");
@@ -38,6 +42,7 @@ public class GatewayConstruct extends Construct {
 
     private RestApi createLambdaRestApi(Function function, String origin, String idSuffix) {
         var restApi = RestApi.Builder.create(this, resourceId(idSuffix + "RestApi"))
+                .deploy(true)
                 .restApiName(idSuffix + "RestApi")
                 .description("The rest-api for sending emails")
                 .defaultIntegration(MockIntegration.Builder.create()
@@ -85,7 +90,9 @@ public class GatewayConstruct extends Construct {
                 .retainDeployments(false)
                 .api(restApi)
                 .build();
-        deployment.addToLogicalId(UUID.randomUUID().toString());
+        if(Boolean.valueOf(recreateDeployment.getValueAsString())) {
+            deployment.addToLogicalId(UUID.randomUUID().toString());
+        }
 
         return restApi;
     }
