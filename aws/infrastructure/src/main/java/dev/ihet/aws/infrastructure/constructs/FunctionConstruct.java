@@ -12,6 +12,7 @@ import software.amazon.awscdk.services.lambda.Architecture;
 import software.amazon.awscdk.services.lambda.Code;
 import software.amazon.awscdk.services.lambda.Function;
 import software.amazon.awscdk.services.lambda.Runtime;
+import software.amazon.awscdk.services.logs.RetentionDays;
 import software.amazon.awscdk.services.s3.assets.AssetOptions;
 import software.constructs.Construct;
 
@@ -37,6 +38,7 @@ public class FunctionConstruct extends Construct {
                 .architecture(Architecture.X86_64)
                 .memorySize(1024) // 0.5 vpu
                 .timeout(Duration.seconds(10))
+                .logRetention(RetentionDays.ONE_WEEK)
                 .code(Code.fromAsset("../functions", AssetOptions.builder()
                         .bundling(BundlingOptions.builder()
                                 .image(Runtime.JAVA_11.getBundlingImage())
@@ -63,14 +65,10 @@ public class FunctionConstruct extends Construct {
                                         "ses:SendRawEmail",
                                         "ses:SendTemplatedEmail"
                                 ))
-                                .resources(List.of(
-                                        config.sesArn
-                                ))
+                                .resources(List.of(config.sesArn))
                                 .build()
                 ))
-                .environment(Map.of(
-                        "AWS_EMAIL", config.email
-                ))
+                .environment(Map.of("AWS_EMAIL", config.email))
                 .build();
     }
 

@@ -8,8 +8,8 @@ import software.amazon.awscdk.services.lambda.Function;
 import software.amazon.awscdk.services.lambda.HttpMethod;
 import software.constructs.Construct;
 
-import java.net.http.HttpHeaders;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static dev.ihet.aws.infrastructure.helper.Util.resourceId;
@@ -18,19 +18,14 @@ public class GatewayConstruct extends Construct {
 
     private static final Configuration config = Configuration.load();
 
-    private final Stage prodStage;
-
-    private final Stage testStage;
-
-
     public GatewayConstruct(@NotNull Construct scope, @NotNull String id, Function function) {
         super(scope, id);
 
         var prodRestApi = createLambdaRestApi(function, config.webOrigin(), "Prod");
         var testRestApi = createLambdaRestApi(function, config.testOrigin(), "Test");
 
-        prodStage = prodRestApi.getDeploymentStage();
-        testStage = testRestApi.getDeploymentStage();
+        var prodStage = prodRestApi.getDeploymentStage();
+        var testStage = testRestApi.getDeploymentStage();
 
         createUsagePlan(prodRestApi, prodStage, "Prod", config.apiKey);
         createUsagePlan(testRestApi, testStage, "Test", config.testApiKey);
@@ -41,14 +36,17 @@ public class GatewayConstruct extends Construct {
         );
     }
 
-    private LambdaRestApi createLambdaRestApi(Function function, String origin, String idSuffix) {
-        var restApi = LambdaRestApi.Builder.create(this, resourceId(idSuffix + "RestApi"))
+    private RestApi createLambdaRestApi(Function function, String origin, String idSuffix) {
+        var restApi = RestApi.Builder.create(this, resourceId(idSuffix + "RestApi"))
                 .restApiName(idSuffix + "RestApi")
                 .description("The rest-api for sending emails")
-                .cloudWatchRole(true)
-                .deploy(true)
-                .proxy(false)
-                .handler(function)
+                .defaultIntegration(MockIntegration.Builder.create()
+                        .passthroughBehavior(PassthroughBehavior.NEVER)
+                        .integrationResponses(List.of(IntegrationResponse.builder()
+                                .statusCode("200")
+                                .responseTemplates(Map.of("application/json", "{ \"message\": \"Nothing happens here\" }"))
+                                .build()))
+                        .build())
                 .apiKeySourceType(ApiKeySourceType.HEADER)
                 .endpointConfiguration(
                         EndpointConfiguration.builder()
@@ -65,18 +63,22 @@ public class GatewayConstruct extends Construct {
                         .statusCode(200)
                         .build()).deployOptions(StageOptions.builder()
                         .build())
-                .build();
-        restApi.getRoot().addResource("contactMe", ResourceOptions.builder()
-                        .defaultMethodOptions(
-                                MethodOptions.builder()
-                                        .apiKeyRequired(true)
-                                        .build())
+                .defaultMethodOptions(MethodOptions.builder()
+                        .apiKeyRequired(true)
                         .build())
-                .addMethod(HttpMethod.POST.name());
+                .build();
+        // Create a proxy so we can disable ANY
+        restApi.getRoot().addProxy(ProxyResourceOptions.builder()
+                .anyMethod(false)
+                .build());
+        // This is the only resource the lambda supports right now
+        var resource = restApi.getRoot().addResource("contactMe");
+        resource.addMethod("POST", new LambdaIntegration(function));
+
         // IMPORTANT: Workaround to disable the api-key for OPTIONS method
         restApi.getMethods().stream()
                 .filter(m -> m.getHttpMethod().equalsIgnoreCase("OPTIONS"))
-                .forEach(m -> ((CfnMethod)m.getNode().getDefaultChild()).setApiKeyRequired(false));
+                .forEach(m -> ((CfnMethod) m.getNode().getDefaultChild()).setApiKeyRequired(false));
 
         // REST-API deployment
         var deployment = Deployment.Builder.create(this, resourceId(idSuffix + "Deployment"))
@@ -107,13 +109,5 @@ public class GatewayConstruct extends Construct {
                         .build())
                 .build());
         stageUsagePlan.addApiKey(apiKey);
-    }
-
-    public Stage getProdStage() {
-        return prodStage;
-    }
-
-    public Stage getTestStage() {
-        return testStage;
     }
 }

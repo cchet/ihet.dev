@@ -32,7 +32,7 @@ public class ContactMeResource {
     }
 
     private void sendEmail(Contact contact) {
-        var destination = Destination.builder().toAddresses(contact.email).build();
+        var destination = Destination.builder().toAddresses(config.email).build();
         var content = Content.builder().data(contact.message).build();
         var sub = Content.builder().data("(" + contact.stage + ") Contact request from " + contact.email).build();
         var body = Body.builder().html(content).build();

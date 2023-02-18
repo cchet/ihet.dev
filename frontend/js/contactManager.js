@@ -34,6 +34,7 @@ const sendEmail = async (options) => {
             } else {
                 document.querySelector(`.${contact.feedbackClass}-error`).classList.remove('d-none');
             }
+            const form = document.getElementById(contact.formId);
             form.reset();
             form.classList.remove('was-validated');
         })

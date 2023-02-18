@@ -3,6 +3,7 @@ package dev.ihet.aws.infrastructure.constructs;
 import dev.ihet.aws.infrastructure.helper.Configuration;
 import dev.ihet.aws.infrastructure.stacks.BackendStack;
 import org.jetbrains.annotations.NotNull;
+import software.amazon.awscdk.CfnParameter;
 import software.amazon.awscdk.services.amplify.CfnApp;
 import software.amazon.awscdk.services.amplify.CfnBranch;
 import software.amazon.awscdk.services.amplify.CfnDomain;
@@ -19,7 +20,7 @@ public class AmplifyConstruct extends Construct {
 
     private final CfnApp app;
 
-    public AmplifyConstruct(@NotNull Construct scope, @NotNull String id, BackendStack backendStack) {
+    public AmplifyConstruct(@NotNull Construct scope, @NotNull String id, CfnParameter prodUrl, CfnParameter testUrl) {
         super(scope, id);
 
         app = CfnApp.Builder.create(this, resourceId("AmplifyApp"))
@@ -42,7 +43,7 @@ public class AmplifyConstruct extends Construct {
                 .stage("PRODUCTION")
                 .environmentVariables(List.of(
                         CfnBranch.EnvironmentVariableProperty.builder().name("API_KEY").value(config.apiKey).build(),
-                        CfnBranch.EnvironmentVariableProperty.builder().name("API_ROOT_URL").value(backendStack.getGatewayConstruct().getProdStage().urlForPath()).build(),
+                        CfnBranch.EnvironmentVariableProperty.builder().name("API_ROOT_URL").value(prodUrl.getValueAsString()).build(),
                         CfnBranch.EnvironmentVariableProperty.builder().name("STAGE").value("production").build()
                 ))
                 .build();
@@ -56,7 +57,7 @@ public class AmplifyConstruct extends Construct {
                 .stage("BETA")
                 .environmentVariables(List.of(
                         CfnBranch.EnvironmentVariableProperty.builder().name("API_KEY").value(config.testApiKey).build(),
-                        CfnBranch.EnvironmentVariableProperty.builder().name("API_ROOT_URL").value(backendStack.getGatewayConstruct().getTestStage().urlForPath()).build(),
+                        CfnBranch.EnvironmentVariableProperty.builder().name("API_ROOT_URL").value(testUrl.getValueAsString()).build(),
                         CfnBranch.EnvironmentVariableProperty.builder().name("STAGE").value("testing").build()
                 ))
                 .build();

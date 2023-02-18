@@ -16,7 +16,7 @@ public class AwsApp {
     public static void main(final String[] args) {
         var app = new App();
 
-        var backendStack = new BackendStack(app, resourceId("BackendStack"), StackProps.builder()
+        new BackendStack(app, resourceId("BackendStack"), StackProps.builder()
                 .description("The backend for the website " + config.webOrigin())
                 .env(Environment.builder()
                         .account(config.account)
@@ -30,8 +30,7 @@ public class AwsApp {
                         .account(config.account)
                         .region(config.region)
                         .build())
-                .build(),
-                 backendStack);
+                .build());
 
         // standard tags
         Tags.of(app).add("owner", config.account);
