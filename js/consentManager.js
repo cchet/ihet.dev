@@ -8,8 +8,7 @@ const state = {
     categories: {
         necessary: 'necessary',
         analytics: 'analytics'
-    },
-    gid: 'G-46RZRMC1YC',
+    }
 }
 
 const addEventListenerForPrivacySettingsLink = (options) => {
@@ -22,7 +21,7 @@ const addEventListenerForPrivacySettingsLink = (options) => {
 };
 
 const disableGoogleAnalytics = (options) => {
-    window[`ga-disable-${state.gid}`] = true;
+    window[`ga-disable-${options.config.gId}`] = true;
     gtag('consent', 'update', {
         'analytics_storage': 'denied',
     });
@@ -30,14 +29,14 @@ const disableGoogleAnalytics = (options) => {
 };
 
 const enableGoogleAnalytics = (options) => {
-    window[`ga-disable-${state.gid}`] = false;
+    window[`ga-disable-${options.config.gId}`] = false;
     gtag('js', new Date());
     gtag('consent', 'default', {
         'ad_storage': 'denied',
         'analytics_storage': 'granted',
     });
 
-    gtag('config', state.gid, {
+    gtag('config', options.config.gId, {
         'anonymize_ip': true,
         'allow_ad_personalization_signals': false,
         'allow_google_signals': false,
@@ -166,8 +165,10 @@ const runConsentDialog = (options) => {
 };
 
 const init = (options) => {
-    options.cc = initCookieConsent();
-    runConsentDialog(options);
+    if (options.configLoaded) {
+        options.cc = initCookieConsent();
+        runConsentDialog(options);
+    }
 };
 
 export default {
