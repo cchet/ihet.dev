@@ -29,7 +29,6 @@ public class AmplifyConstruct extends Construct {
                 .repository(config.repository)
                 .enableBranchAutoDeletion(true)
                 .environmentVariables(List.of(
-                        CfnApp.EnvironmentVariableProperty.builder().name("API_KEY").value(config.apiKey).build(),
                         CfnApp.EnvironmentVariableProperty.builder().name("GOOGLE_ANALYTICS_ID").value(config.gId).build()
                 ))
                 .build();
@@ -42,6 +41,7 @@ public class AmplifyConstruct extends Construct {
                 .enablePerformanceMode(true)
                 .stage("PRODUCTION")
                 .environmentVariables(List.of(
+                        CfnBranch.EnvironmentVariableProperty.builder().name("API_KEY").value(config.apiKey).build(),
                         CfnBranch.EnvironmentVariableProperty.builder().name("API_ROOT_URL").value(backendStack.getGatewayConstruct().getProdStage().urlForPath()).build(),
                         CfnBranch.EnvironmentVariableProperty.builder().name("STAGE").value(backendStack.getGatewayConstruct().getProdStage().getStageName()).build()
                 ))
@@ -55,6 +55,7 @@ public class AmplifyConstruct extends Construct {
                 .enablePerformanceMode(true)
                 .stage("BETA")
                 .environmentVariables(List.of(
+                        CfnBranch.EnvironmentVariableProperty.builder().name("API_KEY").value(config.testApiKey).build(),
                         CfnBranch.EnvironmentVariableProperty.builder().name("API_ROOT_URL").value(backendStack.getGatewayConstruct().getTestStage().urlForPath()).build(),
                         CfnBranch.EnvironmentVariableProperty.builder().name("STAGE").value(backendStack.getGatewayConstruct().getTestStage().getStageName()).build()
                 ))
