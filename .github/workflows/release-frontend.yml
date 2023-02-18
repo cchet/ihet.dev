@@ -33,4 +33,4 @@ jobs:
           BRANCH: deploy-${{github.ref_name}}
           FOLDER: release
           GITHUB_TOKEN: ${{ github.token }}
-          MESSAGE: "Versioned index.html linked static resource with commit '{sha}'"
+          MESSAGE: "Pushed new frontend release. commit='{sha}'"
