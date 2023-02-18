@@ -30,9 +30,9 @@ const sendEmail = async (options) => {
         .then(responseBody => {
             console.log(`Sending email success response: ${JSON.stringify(responseBody)}`);
             if (responseBody.error) {
-                document.querySelector(`.${contact.feedbackClass}-success`).classList.remove('d-none');
-            } else {
                 document.querySelector(`.${contact.feedbackClass}-error`).classList.remove('d-none');
+            } else {
+                document.querySelector(`.${contact.feedbackClass}-success`).classList.remove('d-none');
             }
             const form = document.getElementById(contact.formId);
             form.reset();
