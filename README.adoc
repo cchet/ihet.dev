@@ -13,15 +13,17 @@ Additionally this website uses images of technologies I work with which have bee
 
 == Privacy
 
-TODO: Document how integrated and managed
+My website values users privacy and a user consent is required to gather analytics of my website. If a user doesn't give it, then not analytic tracing takes place.
+
+My website uses anyltics but no adverticing and no users data and anyltic traces are given away to anyone. 
 
 === Google Analytics
 
-TODO: Document how integrated and used
+Google analytics is used to trace interactions with my website, which requires the users consent. If the user opts-out, then the tracing stops, if he opts-in again then the tracing proceeds buts in the analytics it will look like a new user.
 
 == AWS CDK 
 
-This website is deployed on AWS Amplify, and the infrastructure is definied via the AWS CDK Java.
+This website is deployed on AWS, and the infrastructure is definied via the AWS CDK Java.
 
 See link:aws/[AWS CDK Resources] for the infrastructure definition.
 
@@ -31,8 +33,14 @@ Some manual steps are required before the infrastructure can be created which ar
 
 * SES verified email +
 Add the arn of the verified email to `configuration.json`
+* Controll over domain +
+Control over the configured doamin is necessary, because AWS Amplify uses this domain to host the website, and uss DNS Verification to ensure the Domain is owned by the creator of the application
+* Docker installed +
+Docker is used to build the Lambda function for the contact emails.
 
 === Configuration of the Stacks
+
+The following configurations are necessary to create the AWS infrastructure.
 
 .configuration.json
 [source,json]
@@ -47,17 +55,45 @@ Add the arn of the verified email to `configuration.json`
     "domain": "THE_DOMAIN_UNDER_WHICH_TEH_FRONEND_IS_HOSTED",
     "apiKey": "THE_PROD_API_KEY",
     "testApiKey": "THE_TEST_API_KEY",
-    "gId": "G_ID_FOR_ANALYTICS",
+    "gId": "OPTIONAL_G_ID_FOR_ANALYTICS",
     "sesArn": "THE_VERIFIED_IDENTITY_FOR_CONTEXT_EMAILS",
     "email": "THE_SES_VERIFIED_EMAIL"
 }
 ----
 
-IMPORTANT: The `name` propery is also used to create the aws-stack and resource-ids. 
-           Don't change the name before you have deleted the aws-stack, otherwise the stack cannot be deleted anymore. 
+IMPORTANT: The `name` propery is also used to create the aws-stack and resource-ids. Don't change the name before you have deleted the aws-stack, otherwise the stack cannot be deleted anymore. 
 
-WARNING: If you re-create the AWS Amplify application, then cleanup your old DNS entries `CNAME=www` pointing to the old application.
-         Otherwise the sub-domain creation will fail because of that. The domain has to been already verified by AWS as well.
+WARNING: If you re-create the AWS Amplify application, then cleanup your old DNS entries `CNAME=www`, `CNAME=test` pointing to the old application. Otherwise the sub-domain creation will fail because of that. The domain has to been already verified by AWS as well.
 
-The `branchPrefix` is suffixed with `-main` for the porduction deployments and `-test` for the test deployments. +
-THe domain is suffixed with `www` for the production branch and with `test` for the test branch.
+The `branchPrefix` is suffixed with `-main` for the porduction deployments and `-test` for the test deployments (e.g.: `deploy-main, deploy-test`). +
+The domain is suffixed with `www` for the production branch and with `test` for the test branch (e.g `www.ihet.dev, test.ihet.dev`).
+
+=== Deploy the infrastructure
+
+There is a infrastructure stack for the backend and the frontend, which are independent of each other, meaning they don't reference resource of the other stack.
+
+.Synthesize the infrastructure
+[source,sh]
+----
+cd aws/infrastructure
+cdk synthesize
+----
+
+.Deploy the backend stack
+[source,sh]
+----
+cdk deploy <CONFIGURED_NAME>BackendStack \
+--parameters recreateDeployment=true
+----
+
+TIP: Set recreateDeployment=false or leave it out completelly to avoid recreate of the AWS ApiGateway resources
+
+.Deploy the frontend stack
+[source,sh]
+----
+cdk deploy <CONFIGURED_NAME>FrontendStack \
+--parameters prodUrl=<PROD_URL> \
+--parameters testUrl=<TEST_URL>
+----
+
+TIP: The urls are the urls of the respective production or testing ApiGateways which got printed out after the deployment of the `BackendStack` completed. Theses urls are configure by AWS Amplify an point a branch to its corresponding backend.
