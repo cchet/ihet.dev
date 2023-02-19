@@ -24,7 +24,7 @@ public class AmplifyTopicConstruct extends Construct {
         Topic.Builder.create(this, resourceId(idSuffix))
                 .topicName(buildSnsTopicForAppIdAndBranch(app.getAttrAppId(), branchName))
                 .build()
-                .addSubscription(new EmailSubscription(config.email));
+                .addSubscription(new EmailSubscription(config.emailSender));
     }
 
     private String buildSnsTopicForAppIdAndBranch(String appId, String branchName) {

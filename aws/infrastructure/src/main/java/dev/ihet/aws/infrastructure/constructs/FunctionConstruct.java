@@ -1,7 +1,6 @@
 package dev.ihet.aws.infrastructure.constructs;
 
 import dev.ihet.aws.infrastructure.helper.Configuration;
-import dev.ihet.aws.infrastructure.helper.Util;
 import org.jetbrains.annotations.NotNull;
 import software.amazon.awscdk.BundlingOptions;
 import software.amazon.awscdk.BundlingOutput;
@@ -65,10 +64,11 @@ public class FunctionConstruct extends Construct {
                                         "ses:SendRawEmail",
                                         "ses:SendTemplatedEmail"
                                 ))
-                                .resources(List.of(config.sesArn))
+                                .resources(List.of("*"))
                                 .build()
                 ))
-                .environment(Map.of("AWS_EMAIL", config.email))
+                .environment(Map.of("AWS_EMAIL_SENDER", config.emailSender,
+                        "AWS_EMAIL_RECIPIENT", config.emailRecipient))
                 .build();
     }
 

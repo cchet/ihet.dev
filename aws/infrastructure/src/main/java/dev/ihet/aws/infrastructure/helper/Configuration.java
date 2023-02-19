@@ -33,7 +33,9 @@ public class Configuration {
 
     public String sesArn;
 
-    public String email;
+    public String emailRecipient;
+
+    public String emailSender;
 
     public static Configuration load() {
         if (CONFIG == null) {

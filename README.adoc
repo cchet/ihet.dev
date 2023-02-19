@@ -32,7 +32,7 @@ See link:aws/[AWS CDK Resources] for the infrastructure definition.
 Some manual steps are required before the infrastructure can be created which are documented here.
 
 * SES verified email +
-Add the arn of the verified email to `configuration.json`
+Verifiy the emails you have configured as `emailRecipient` and `emailSender` 
 * Controll over domain +
 Control over the configured doamin is necessary, because AWS Amplify uses this domain to host the website, and uss DNS Verification to ensure the Domain is owned by the creator of the application
 * Docker installed +
@@ -56,8 +56,8 @@ The following configurations are necessary to create the AWS infrastructure.
     "apiKey": "THE_PROD_API_KEY",
     "testApiKey": "THE_TEST_API_KEY",
     "gId": "OPTIONAL_G_ID_FOR_ANALYTICS",
-    "sesArn": "THE_VERIFIED_IDENTITY_FOR_CONTEXT_EMAILS",
-    "email": "THE_SES_VERIFIED_EMAIL"
+    "emailRecipient": "SES_VERIFIERD_IDENTITY_EMAIL",
+    "emailSender": "SES_VERIFIERD_IDENTITY_EMAIL"
 }
 ----
 

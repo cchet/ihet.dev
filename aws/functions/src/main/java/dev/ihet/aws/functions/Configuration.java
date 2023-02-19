@@ -10,6 +10,9 @@ public class Configuration {
     @ConfigProperty(name = "aws.region")
     public String region;
 
-    @ConfigProperty(name = "aws.email")
-    public String email;
+    @ConfigProperty(name = "aws.email.recipient")
+    public String emailRecipient;
+
+    @ConfigProperty(name = "aws.email.sender")
+    public String emailSender;
 }
