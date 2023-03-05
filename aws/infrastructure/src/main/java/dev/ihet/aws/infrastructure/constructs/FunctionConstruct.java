@@ -79,7 +79,7 @@ public class FunctionConstruct extends Construct {
                 .enabled(true)
                 .reportBatchItemFailures(true)
                 .batchSize(10)
-                .maxBatchingWindow(Duration.minutes(1))
+                .maxBatchingWindow(Duration.seconds(300))
                 .build());
     }
 
