@@ -1,7 +1,6 @@
 package dev.ihet.aws.infrastructure.constructs;
 
-import dev.ihet.aws.infrastructure.helper.Configuration;
-import dev.ihet.aws.infrastructure.stacks.BackendStack;
+import dev.ihet.aws.infrastructure.Configuration;
 import org.jetbrains.annotations.NotNull;
 import software.amazon.awscdk.CfnParameter;
 import software.amazon.awscdk.services.amplify.CfnApp;
@@ -12,18 +11,16 @@ import software.constructs.Construct;
 import java.util.List;
 import java.util.Map;
 
-import static dev.ihet.aws.infrastructure.helper.Util.resourceId;
-
 public class AmplifyConstruct extends Construct {
 
-    private static final Configuration config = Configuration.load();
+    private static final Configuration config = Configuration.CONFIG;
 
     private final CfnApp app;
 
     public AmplifyConstruct(@NotNull Construct scope, @NotNull String id, CfnParameter prodUrl, CfnParameter testUrl) {
         super(scope, id);
 
-        app = CfnApp.Builder.create(this, resourceId("AmplifyApp"))
+        app = CfnApp.Builder.create(this, config.namePrefixedId("AmplifyApp"))
                 .name(config.name)
                 .accessToken(config.accessToken)
                 .platform("WEB")
@@ -35,7 +32,7 @@ public class AmplifyConstruct extends Construct {
                 .build();
 
         // Connect the branch which gets deployed automatically on a change
-        var prodBranch = CfnBranch.Builder.create(this, resourceId("AmplifyProdBranch"))
+        var prodBranch = CfnBranch.Builder.create(this, config.namePrefixedId("AmplifyProdBranch"))
                 .appId(app.getAttrAppId())
                 .branchName(config.prodBranch())
                 .enableAutoBuild(true)
@@ -43,13 +40,12 @@ public class AmplifyConstruct extends Construct {
                 .stage("PRODUCTION")
                 .environmentVariables(List.of(
                         CfnBranch.EnvironmentVariableProperty.builder().name("API_KEY").value(config.apiKey).build(),
-                        CfnBranch.EnvironmentVariableProperty.builder().name("API_ROOT_URL").value(prodUrl.getValueAsString()).build(),
-                        CfnBranch.EnvironmentVariableProperty.builder().name("STAGE").value("production").build()
+                        CfnBranch.EnvironmentVariableProperty.builder().name("API_ROOT_URL").value(prodUrl.getValueAsString()).build()
                 ))
                 .build();
         prodBranch.addDependency(app);
 
-        var testBranch  = CfnBranch.Builder.create(this, resourceId("AmplifyTestBranch"))
+        var testBranch = CfnBranch.Builder.create(this, config.namePrefixedId("AmplifyTestBranch"))
                 .appId(app.getAttrAppId())
                 .branchName(config.testBranch())
                 .enableAutoBuild(true)
@@ -57,14 +53,13 @@ public class AmplifyConstruct extends Construct {
                 .stage("BETA")
                 .environmentVariables(List.of(
                         CfnBranch.EnvironmentVariableProperty.builder().name("API_KEY").value(config.testApiKey).build(),
-                        CfnBranch.EnvironmentVariableProperty.builder().name("API_ROOT_URL").value(testUrl.getValueAsString()).build(),
-                        CfnBranch.EnvironmentVariableProperty.builder().name("STAGE").value("testing").build()
+                        CfnBranch.EnvironmentVariableProperty.builder().name("API_ROOT_URL").value(testUrl.getValueAsString()).build()
                 ))
                 .build();
         testBranch.addDependency(prodBranch);
 
         // Create the domain settings
-        CfnDomain.Builder.create(this, resourceId("AmplifyDomain"))
+        CfnDomain.Builder.create(this, config.namePrefixedId("AmplifyDomain"))
                 .appId(app.getAttrAppId())
                 .domainName(config.domain)
                 .enableAutoSubDomain(true)

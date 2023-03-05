@@ -3,7 +3,7 @@ frontend:
   phases:
     build:
       commands: 
-        - 'echo "{\"apiUrl\": \"${API_ROOT_URL}\",\"apiKey\": \"${API_KEY}\",\"gId\": \"${GOOGLE_ANALYTICS_ID}\",\"stage\": \"${STAGE}\"}" > ./config.json'
+        - 'echo "{\"apiUrl\": \"${API_ROOT_URL}\",\"apiKey\": \"${API_KEY}\",\"gId\": \"${GOOGLE_ANALYTICS_ID}\"}" > ./config.json'
   artifacts:
     baseDirectory: /
     files:

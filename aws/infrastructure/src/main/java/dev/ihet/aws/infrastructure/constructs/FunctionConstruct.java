@@ -1,6 +1,6 @@
 package dev.ihet.aws.infrastructure.constructs;
 
-import dev.ihet.aws.infrastructure.helper.Configuration;
+import dev.ihet.aws.infrastructure.Configuration;
 import org.jetbrains.annotations.NotNull;
 import software.amazon.awscdk.BundlingOptions;
 import software.amazon.awscdk.BundlingOutput;
@@ -11,27 +11,29 @@ import software.amazon.awscdk.services.lambda.Architecture;
 import software.amazon.awscdk.services.lambda.Code;
 import software.amazon.awscdk.services.lambda.Function;
 import software.amazon.awscdk.services.lambda.Runtime;
+import software.amazon.awscdk.services.lambda.eventsources.SqsEventSource;
 import software.amazon.awscdk.services.logs.RetentionDays;
 import software.amazon.awscdk.services.s3.assets.AssetOptions;
+import software.amazon.awscdk.services.sqs.Queue;
 import software.constructs.Construct;
 
 import java.util.List;
 import java.util.Map;
 
-import static dev.ihet.aws.infrastructure.helper.Util.resourceId;
-
 public class FunctionConstruct extends Construct {
 
-    private static final Configuration config = Configuration.load();
+    private static final Configuration config = Configuration.CONFIG;
 
+    private final String stage;
     private final Function function;
 
-    public FunctionConstruct(@NotNull Construct scope, @NotNull String id) {
+    public FunctionConstruct(@NotNull Construct scope, @NotNull String id, Queue queue, String stage) {
         super(scope, id);
+        this.stage = stage;
 
         // Functions
-        function = Function.Builder.create(this, "BackendFunction")
-                .functionName(resourceId("ContactMeFunction"))
+        function = Function.Builder.create(this, config.namePrefixedId(stage, "BackendFunction"))
+                .functionName(config.prefixedId("ContactMeFunction", stage))
                 .description("The lambda for sending contact me emails")
                 .runtime(Runtime.JAVA_11)
                 .architecture(Architecture.X86_64)
@@ -67,9 +69,18 @@ public class FunctionConstruct extends Construct {
                                 .resources(List.of("*"))
                                 .build()
                 ))
-                .environment(Map.of("AWS_EMAIL_SENDER", config.emailSender,
-                        "AWS_EMAIL_RECIPIENT", config.emailRecipient))
+                .environment(Map.of(
+                        "AWS_EMAIL_SENDER", config.emailSender,
+                        "AWS_EMAIL_RECIPIENT", config.emailRecipient,
+                        "AWS_STAGE", stage))
                 .build();
+
+        function.addEventSource(SqsEventSource.Builder.create(queue)
+                .enabled(true)
+                .reportBatchItemFailures(true)
+                .batchSize(10)
+                .maxBatchingWindow(Duration.seconds(300))
+                .build());
     }
 
     public Function getFunction() {
