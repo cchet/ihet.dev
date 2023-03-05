@@ -10,8 +10,7 @@ const sendEmail = async (options) => {
     const contactRequestBody = {
         name: document.getElementById(contact.nameFieldId).value,
         email: document.getElementById(contact.emailFieldId).value,
-        message: document.getElementById(contact.messageFieldId).value,
-        stage: config.stage
+        message: document.getElementById(contact.messageFieldId).value
     }
     console.log(`Sending email with body: ${JSON.stringify(contactRequestBody)}`)
     const abortController = new AbortController()
