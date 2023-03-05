@@ -1,16 +1,18 @@
-package dev.ihet.aws.infrastructure.helper;
+package dev.ihet.aws.infrastructure;
 
 import jakarta.json.bind.JsonbBuilder;
 import jakarta.json.bind.JsonbConfig;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Configuration {
 
     private static final JsonbConfig JSONB_CONFIG = new JsonbConfig().withNullValues(true).withFormatting(true);
 
-    private static Configuration CONFIG;
+    public static Configuration CONFIG = load();
 
     public String account;
 
@@ -31,26 +33,30 @@ public class Configuration {
     public String testApiKey;
     public String gId;
 
-    public String sesArn;
-
     public String emailRecipient;
 
     public String emailSender;
 
-    public static Configuration load() {
-        if (CONFIG == null) {
-            try (var is = Files.newInputStream(Paths.get("configuration.json"))) {
-                CONFIG = JsonbBuilder.create(JSONB_CONFIG).fromJson(is, Configuration.class);
-            } catch (Exception e) {
-                throw new RuntimeException("Loading of the configuration failed", e);
-            }
+    private static Configuration load() {
+        try (var is = Files.newInputStream(Paths.get("configuration.json"))) {
+            return JsonbBuilder.create(JSONB_CONFIG).fromJson(is, Configuration.class);
+        } catch (Exception e) {
+            throw new RuntimeException("Loading of the configuration failed", e);
         }
-        return CONFIG;
+    }
+
+    public String namePrefixedId(String... ids) {
+        return name + prefixedId(ids);
+    }
+
+    public String prefixedId(String... ids) {
+        return Stream.of(ids).collect(Collectors.joining());
     }
 
     public String webOrigin() {
         return "https://www." + domain;
     }
+
     public String testOrigin() {
         return "https://test." + domain;
     }
@@ -58,6 +64,7 @@ public class Configuration {
     public String prodBranch() {
         return branchNamePrefix + "-main";
     }
+
     public String testBranch() {
         return branchNamePrefix + "-test";
     }

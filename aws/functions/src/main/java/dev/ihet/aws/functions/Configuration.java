@@ -15,4 +15,6 @@ public class Configuration {
 
     @ConfigProperty(name = "aws.email.sender")
     public String emailSender;
+    @ConfigProperty(name = "aws.stage")
+    public String stage;
 }
