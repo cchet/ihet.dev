@@ -211,24 +211,23 @@
             <!-- Contact Section Form-->
             <div class="row justify-content-center text-white">
                 <div class="col-lg-8 col-xl-7">
-                    <div>The sending of the email could take up to 15 seconds if my backend has gone to sleep, so please be patient</div>
                     <form id="contactForm" class="needs-validation" novalidate>
                         <!-- Name input-->
                         <div class="form-floating mb-3">
-                            <input class="form-control bg-primary" id="name" type="text" placeholder="Enter your name..." required min="5" max="50" />
+                            <input class="form-control bg-primary" id="name" type="text" placeholder="Enter your name..." required minlength="5" maxlength="50" />
                             <label for="name" class="text-white">Full name</label>
                             <div class="invalid-feedback">A name is required.</div>
                         </div>
                         <!-- Email address input-->
                         <div class="form-floating mb-3">
-                            <input class="form-control bg-primary" id="email" type="email" placeholder="name@example.com" required aria-describedby="emailHelp">
+                            <input class="form-control bg-primary" id="email" type="email" placeholder="name@example.com" required aria-describedby="emailHelp" minlength="6" maxlength="127">
                             <div id="emailHelp" class="form-text text-white">You'r email will not be shared with anyone</div>
                             <label for="email" class="text-white">Email address</label>
                             <div class="invalid-feedback">A valid email is required</div>
                         </div>
                         <!-- Message input-->
                         <div class="form-floating mb-3">
-                            <textarea class="form-control bg-primary" id="message" type="text" placeholder="Enter your message here..." style="height: 10rem" minlength="10" maxlength="300" required></textarea>
+                            <textarea class="form-control bg-primary" id="message" type="text" placeholder="Enter your message here..." style="height: 10rem" minlength="10" maxlength="255" required></textarea>
                             <label for="message" class="text-white">Message</label>
                             <div class="invalid-feedback">You need to enter a message</div>
                         </div>

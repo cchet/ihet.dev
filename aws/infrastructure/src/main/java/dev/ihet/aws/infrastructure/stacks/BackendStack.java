@@ -18,10 +18,10 @@ public class BackendStack extends Stack {
 
         CfnParameter recreateDeployment = CfnParameter.Builder.create(this, "recreateDeployment").defaultValue("false").build();
 
-        var prodQueue = new QueueConstruct(this, config.namePrefixedId("ProdBackendQueue"), "TEST").getQueue();
-        var testQueue = new QueueConstruct(this, config.namePrefixedId("TestBackendQueue"), "PROD").getQueue();
-        new FunctionConstruct(this, config.namePrefixedId("ProdBackendFunction"), prodQueue, "TEST");
-        new FunctionConstruct(this, config.namePrefixedId("TestBackendFunction"), testQueue, "PROD");
+        var prodQueue = new QueueConstruct(this, config.namePrefixedId("ProdBackendQueue"), "PROD").getQueue();
+        var testQueue = new QueueConstruct(this, config.namePrefixedId("TestBackendQueue"), "TEST").getQueue();
+        new FunctionConstruct(this, config.namePrefixedId("ProdBackendFunction"), prodQueue, "PROD");
+        new FunctionConstruct(this, config.namePrefixedId("TestBackendFunction"), testQueue, "TEST");
         new GatewayConstruct(this, config.namePrefixedId("ProdBackendGateway"), prodQueue, config.webOrigin(), config.apiKey, recreateDeployment);
         new GatewayConstruct(this, config.namePrefixedId("TestBackendGateway"), testQueue, config.testOrigin(), config.testApiKey, recreateDeployment);
     }
